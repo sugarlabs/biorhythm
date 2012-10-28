@@ -37,14 +37,18 @@ class Activity(activity.Activity):
         activity.Activity.__init__(self, handle)
 
         self.max_participants = 1
+        self._now = datetime.now()
+
         self._birth = [31, 12, 2011]
-        self._today = [31, 12, 2012]
+        self._today = [self._now.day, self._now.month, self._now.year]
         self._bio = [1, 1, 1]
 
         self.build_toolbar()
         self._make_display()
         self.show_all()
 
+        
+        #self.calculate_bio()
 
     def build_toolbar(self):
 
@@ -142,7 +146,7 @@ class Activity(activity.Activity):
         self.day_spin = gtk.SpinButton()
         self.day_spin.set_range(1, 31)
         self.day_spin.set_increments(1, 5)
-        self.day_spin.props.value = 31
+        self.day_spin.props.value = self._today[0]
         self.day_spin.connect('notify::value', self.day_today_change)
         item2.add(self.day_spin)
         today_bar.insert(item2, -1)
@@ -157,7 +161,7 @@ class Activity(activity.Activity):
         self.month_spin = gtk.SpinButton()
         self.month_spin.set_range(1, 12)
         self.month_spin.set_increments(1, 4)
-        self.month_spin.props.value = 12
+        self.month_spin.props.value = self._today[1]
         self.month_spin.connect('notify::value', self.month_today_change)
         item4.add(self.month_spin)
         today_bar.insert(item4, -1)
@@ -172,7 +176,7 @@ class Activity(activity.Activity):
         self.year_spin = gtk.SpinButton()
         self.year_spin.set_range(1900, 2012)
         self.year_spin.set_increments(1, 10)
-        self.year_spin.props.value = 2012
+        self.year_spin.props.value = self._today[2]
         self.year_spin.connect('notify::value', self.year_today_change)
         item6.add(self.year_spin)
         today_bar.insert(item6, -1)
@@ -258,7 +262,7 @@ class BiorhytmImage(gtk.DrawingArea):
         self._active = False
 
 
-        self._radius = 100
+        self._scale = 150
         self._line_width = 2
 
 
@@ -304,28 +308,28 @@ class BiorhytmImage(gtk.DrawingArea):
 
     def _draw_digital_clock(self):
         self._draw_time_scale()
-        self._draw_time()
+        #self._draw_time()
 
     def _draw_time_scale(self):
 
-        p_length = int(self._bio[0] * self._radius)
-        e_length = int(self._bio[1] * self._radius)
-        i_length = int(self._bio[2] * self._radius)
-
-         
+        p_length = int(self._bio[0] * self._scale)
+        e_length = int(self._bio[1] * self._scale)
+        i_length = int(self._bio[2] * self._scale)
 
         # Fill background
         cr = self.window.cairo_create()
+        h = 50
+        x = self._center_x
+        y = self._center_y
+
         cr.set_source_rgba(*style.Color(self._COLOR_WHITE).get_rgba())
-        cr.rectangle(round(self._center_x - 1.1 * self._radius),
-                     round(self._center_y - 0.85 * self._radius),
-                     round(2.2 * self._radius),
-                     round(0.65 * self._radius))
+        cr.rectangle(self._center_x,
+                     (self._center_y - self._scale),
+                     300,
+                     self._scale*2)
         cr.fill()
 
-        h = round(0.15 * self._radius)
-        x = round(self._center_x - self._radius)
-        y = self._center_y
+
 
         # Physical cycle
         cr.set_source_rgba(*style.Color(self._COLOR_HOURS).get_rgba())
@@ -353,7 +357,7 @@ class BiorhytmImage(gtk.DrawingArea):
         cr = pangocairo.CairoContext(cr)
         cr.set_source_rgba(*style.Color(self._COLOR_BLACK).get_rgba())
         pango_layout = cr.create_layout()
-        d = int(self._center_y + 0.3 * self._radius)
+        d = int(self._center_y + 0.3 * self._scale)
         markup = markup % "prueba2"
 
         pango_layout.set_markup(markup)
