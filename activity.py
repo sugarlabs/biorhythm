@@ -17,7 +17,7 @@ from sugar.graphics.toolbutton import ToolButton
 from sugar.activity.widgets import ActivityToolbarButton
 from sugar.activity.widgets import StopButton
 from sugar.graphics.toolbarbox import ToolbarButton
-import sugargame.canvas
+
 from sugar.graphics import style
 import pango
 import gst
@@ -203,7 +203,7 @@ class Activity(activity.Activity):
 
     def _make_display(self):
 
-        self._clock = ClockFace()
+        self._biorhytm = Biorhytm()
 
         # The label to print the time in full letters
         self._time_letters = gtk.Label()
@@ -221,7 +221,7 @@ class Activity(activity.Activity):
 
         # Put all these widgets in a vertical box
         vbox = gtk.VBox(False)
-        vbox.pack_start(self._clock, True)
+        vbox.pack_start(self._biorhytm, True)
         vbox.pack_start(self._time_letters, False)
         vbox.pack_start(self._date, False)
 
@@ -229,12 +229,12 @@ class Activity(activity.Activity):
         self.set_canvas(vbox)
 
 
-class ClockFace(gtk.DrawingArea):
+class Biorhytm(gtk.DrawingArea):
 
 
     def __init__(self):
 
-        super(ClockFace, self).__init__()
+        super(Biorhytm, self).__init__()
 
         # Set to True when the variables to draw the clock are set:
         self.initialized = False
@@ -253,11 +253,9 @@ class ClockFace(gtk.DrawingArea):
         # SVG Background handle
         self._svg_handle = None
 
-        self._radius = 500
+        self._radius = 200
         self._line_width = 2
 
-        # Color codes (approved colors for XO screen:
-        # http://wiki.laptop.org/go/XO_colors)
 
         # XO Medium Blue
         self._COLOR_HOURS = "#005FE4"
@@ -279,14 +277,14 @@ class ClockFace(gtk.DrawingArea):
         self.connect("size-allocate", self._size_allocate_cb)
 
         # The masks to capture the events we are interested in
-        self.add_events(gdk.EXPOSURE_MASK | gdk.VISIBILITY_NOTIFY_MASK)
+        #self.add_events(gdk.EXPOSURE_MASK | gdk.VISIBILITY_NOTIFY_MASK)
 
         # Define a new signal to notify the application when minutes
         # change.  If the user wants to display the time in full
         # letters, the method of the activity will be called back to
         # refresh the display.
-        gobject.signal_new("time_minute", ClockFace,
-          gobject.SIGNAL_RUN_LAST, gobject.TYPE_NONE, [])
+        #gobject.signal_new("time_minute", ClockFace,
+        #  gobject.SIGNAL_RUN_LAST, gobject.TYPE_NONE, [])
 
 
     def _draw_digital_clock(self):
@@ -315,43 +313,31 @@ class ClockFace(gtk.DrawingArea):
 
         h = round(0.15 * self._radius)
         x = round(self._center_x - self._radius)
+        y = self._center_y
 
         # Hours scale
         cr.set_source_rgba(*style.Color(self._COLOR_HOURS).get_rgba())
-        y = round(self._center_y - 0.75 * self._radius)
-        cr.rectangle(x, y, hours_length, h)
+        cr.rectangle(x, y, h, hours_length)
         cr.fill()
 
         # Minutes scale
         cr.set_source_rgba(*style.Color(self._COLOR_MINUTES).get_rgba())
-        y = round(self._center_y - 0.60 * self._radius)
-        cr.rectangle(x, y, minutes_length, h)
+        cr.rectangle(x + 100, y, h, minutes_length)
         cr.fill()
 
         # Seconds scale
         cr.set_source_rgba(*style.Color(self._COLOR_SECONDS).get_rgba())
-        y = round(self._center_y - 0.45 * self._radius)
-        cr.rectangle(x, y, seconds_length, h)
+        cr.rectangle(x + 200, y, h, seconds_length)
         cr.fill()
 
     def _draw_time(self):
-        """Draw the time in colors (digital display).
-        """
-        # TRANS: The format used to display the time for digital clock
-        # You can add AM/PM indicator or use 12/24 format, for example
-        # "%I:%M:%S %p".  See
-        # http://docs.python.org/lib/module-time.html for available
-        # strftime formats If the display of the time is moving
-        # horizontally, it means that the glyphs of the digits used in
-        # the font don't have the same width. Try to use a Monospace
-        # font.  xgettext:no-python-format
+
+
         markup = _('<markup>\
-<span lang="en" font_desc="Sans,Monospace Bold 96">\
-<span foreground="#005FE4">%I</span>:\
-<span foreground="#00B20D">%M</span>:\
-<span foreground="#E6000A">%S</span>%p</span></markup>')
+<span lang="en" font_desc="Sans,Monospace Bold 64">\
+<span foreground="#E6000A">%s</span></span></markup>')
         # BUG: The following line kills Python 2.5 but is valid in 2.4
-        markup_time = self._time.strftime(markup)
+        #markup_time = self._time.strftime(markup)
         #markup_time = time.strftime(markup)
 
         cr = self.window.cairo_create()
@@ -359,15 +345,18 @@ class ClockFace(gtk.DrawingArea):
         cr.set_source_rgba(*style.Color(self._COLOR_BLACK).get_rgba())
         pango_layout = cr.create_layout()
         d = int(self._center_y + 0.3 * self._radius)
-        pango_layout.set_markup(markup_time)
+        markup = markup % "prueba2"
+
+        pango_layout.set_markup(markup)
         dx, dy = pango_layout.get_pixel_size()
         pango_layout.set_alignment(pango.ALIGN_CENTER)
         cr.translate(self._center_x - dx / 2.0, d - dy / 2.0)
         cr.show_layout(pango_layout)
 
     def _expose_cb(self, widget, event):
-        self.queue_resize()
+        #self.queue_resize()
         self._draw_digital_clock()
+        pass
 
     def _size_allocate_cb(self, widget, allocation):
 
@@ -376,8 +365,9 @@ class ClockFace(gtk.DrawingArea):
         self._center_y = int(allocation.height / 2.0)
 
     def _redraw_canvas(self):
-        self.queue_draw()
-        self.window.process_updates(True)
+        #self.queue_draw()
+        #self.window.process_updates(True)
+        pass
 
     def _update_cb(self):
         """Called every seconds to update the time value.
@@ -385,4 +375,4 @@ class ClockFace(gtk.DrawingArea):
         # update the time and force a redraw of the clock
         self._time = datetime.now()
 
-        gobject.idle_add(self._redraw_canvas)
+        #gobject.idle_add(self._redraw_canvas)
