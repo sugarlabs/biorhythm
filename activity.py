@@ -24,6 +24,9 @@ import gst
 import cairo
 import pangocairo
 
+from math import sin
+from datetime import date
+
 from datetime import datetime
 
 from gettext import gettext as _
@@ -36,6 +39,7 @@ class Activity(activity.Activity):
         self.max_participants = 1
         self._birth = [31, 12, 2011]
         self._today = [31, 12, 2012]
+        self._bio = [1, 1, 1]
 
         self.build_toolbar()
         self._make_display()
@@ -184,34 +188,43 @@ class Activity(activity.Activity):
     # BIRTH
     def day_birth_change(self, day, value):
         self._birth[0] = int(day.props.value)
+        self.calculate_bio()
 
     def month_birth_change(self, month, value):
         self._birth[1] = int(month.props.value)
+        self.calculate_bio()
 
     def year_birth_change(self, year, value):
         self._birth[2] = int(year.props.value)
+        self.calculate_bio()
 
     # TODAY
     def day_today_change(self, day, value):
         self._today[0] = int(day.props.value)
+        self.calculate_bio()
 
     def month_today_change(self, month, value):
         self._today[1] = int(month.props.value)
+        self.calculate_bio()
 
     def year_today_change(self, year, value):
         self._today[2] = int(year.props.value)
+        self.calculate_bio()
+
+    def calculate_bio(self):
+        birth = date(self._birth[2], self._birth[1], self._birth[0])
+        bio = date(self._today[2], self._today[1], self._today[0])
+        self._bio = self._biorhytm.calc(birth, bio)
+        self._biorhytm._draw_digital_clock()
 
     def _make_display(self):
 
-        self._biorhytm = Biorhytm()
+        self._biorhytm = BiorhytmImage()
 
         # The label to print the time in full letters
         self._time_letters = gtk.Label()
         self._time_letters.set_no_show_all(True)
-        # Following line in ineffective!
-        #self._time_letters.set_line_wrap(True)
-        # Resize the invisible label so that gtk will know in advance
-        # the height when we show it.
+
         self._time_letters.set_markup('holaaaaa')
 
         # The label to write the date
@@ -229,31 +242,23 @@ class Activity(activity.Activity):
         self.set_canvas(vbox)
 
 
-class Biorhytm(gtk.DrawingArea):
+class BiorhytmImage(gtk.DrawingArea):
 
 
     def __init__(self):
 
-        super(Biorhytm, self).__init__()
+        super(BiorhytmImage, self).__init__()
 
         # Set to True when the variables to draw the clock are set:
         self.initialized = False
 
-        # The time on the clock face
         self._time = datetime.now()
-        self._old_minute = self._time.minute
-
-        # Update the clock only when the widget is active to save
-        # resource
+        self._bio = [1, 1, 1]
+        
         self._active = False
 
-        # The display mode of the clock
-        self._mode = 2 #digital
 
-        # SVG Background handle
-        self._svg_handle = None
-
-        self._radius = 200
+        self._radius = 100
         self._line_width = 2
 
 
@@ -276,31 +281,38 @@ class Biorhytm(gtk.DrawingArea):
         self.connect("expose-event", self._expose_cb)
         self.connect("size-allocate", self._size_allocate_cb)
 
-        # The masks to capture the events we are interested in
-        #self.add_events(gdk.EXPOSURE_MASK | gdk.VISIBILITY_NOTIFY_MASK)
 
-        # Define a new signal to notify the application when minutes
-        # change.  If the user wants to display the time in full
-        # letters, the method of the activity will be called back to
-        # refresh the display.
-        #gobject.signal_new("time_minute", ClockFace,
-        #  gobject.SIGNAL_RUN_LAST, gobject.TYPE_NONE, [])
+    def calc(self, birth, bio_date):
+
+        dif = bio_date - birth
+
+        NumbersDays = dif.days
+
+        # Physical cycle
+        p = sin(2 * 3.14159 * NumbersDays / 23)
+
+        # Emotional cycle
+        e = sin(2 * 3.14159 * NumbersDays / 28)
+
+        # Intellectual cycle
+        i = sin(2 * 3.14159 * NumbersDays / 33)
+
+        #print 'bio', p, e, i
+        self._bio = (p, e, i)
+        return self._bio
 
 
     def _draw_digital_clock(self):
-        """Draw the digital clock.
-        """
         self._draw_time_scale()
         self._draw_time()
 
     def _draw_time_scale(self):
-        """Draw a time scale for digital clock.
-        """
-        # Draw scales of hours, minutes and seconds, to give the children
-        # an appreciation of the time flowing...
-        hours_length = 2 * self._radius / 24 * self._time.hour
-        minutes_length = 2 * self._radius / 60 * self._time.minute
-        seconds_length = 2 * self._radius / 60 * self._time.second
+
+        p_length = int(self._bio[0] * self._radius)
+        e_length = int(self._bio[1] * self._radius)
+        i_length = int(self._bio[2] * self._radius)
+
+         
 
         # Fill background
         cr = self.window.cairo_create()
@@ -315,19 +327,19 @@ class Biorhytm(gtk.DrawingArea):
         x = round(self._center_x - self._radius)
         y = self._center_y
 
-        # Hours scale
+        # Physical cycle
         cr.set_source_rgba(*style.Color(self._COLOR_HOURS).get_rgba())
-        cr.rectangle(x, y, h, hours_length)
+        cr.rectangle(x, y, h, p_length)
         cr.fill()
 
-        # Minutes scale
+        # Emotional cycle
         cr.set_source_rgba(*style.Color(self._COLOR_MINUTES).get_rgba())
-        cr.rectangle(x + 100, y, h, minutes_length)
+        cr.rectangle(x + 100, y, h, e_length)
         cr.fill()
 
-        # Seconds scale
+        # Intellectual cycle
         cr.set_source_rgba(*style.Color(self._COLOR_SECONDS).get_rgba())
-        cr.rectangle(x + 200, y, h, seconds_length)
+        cr.rectangle(x + 200, y, h, i_length)
         cr.fill()
 
     def _draw_time(self):
@@ -336,9 +348,6 @@ class Biorhytm(gtk.DrawingArea):
         markup = _('<markup>\
 <span lang="en" font_desc="Sans,Monospace Bold 64">\
 <span foreground="#E6000A">%s</span></span></markup>')
-        # BUG: The following line kills Python 2.5 but is valid in 2.4
-        #markup_time = self._time.strftime(markup)
-        #markup_time = time.strftime(markup)
 
         cr = self.window.cairo_create()
         cr = pangocairo.CairoContext(cr)
@@ -370,8 +379,6 @@ class Biorhytm(gtk.DrawingArea):
         pass
 
     def _update_cb(self):
-        """Called every seconds to update the time value.
-        """
         # update the time and force a redraw of the clock
         self._time = datetime.now()
 
