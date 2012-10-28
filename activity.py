@@ -262,7 +262,7 @@ class BiorhytmImage(gtk.DrawingArea):
         self._active = False
 
 
-        self._scale = 150
+        self._scale = 200
         self._line_width = 2
 
 
@@ -323,27 +323,27 @@ class BiorhytmImage(gtk.DrawingArea):
         y = self._center_y
 
         cr.set_source_rgba(*style.Color(self._COLOR_WHITE).get_rgba())
-        cr.rectangle(self._center_x,
-                     (self._center_y - self._scale),
-                     300,
-                     self._scale*2)
+        cr.rectangle(self._center_x-85,
+                     (self._center_y - self._scale-10),
+                     220,
+                     self._scale*2+20)
         cr.fill()
 
 
 
         # Physical cycle
         cr.set_source_rgba(*style.Color(self._COLOR_HOURS).get_rgba())
-        cr.rectangle(x, y, h, p_length)
+        cr.rectangle(x-70, y, h, p_length)
         cr.fill()
 
         # Emotional cycle
         cr.set_source_rgba(*style.Color(self._COLOR_MINUTES).get_rgba())
-        cr.rectangle(x + 100, y, h, e_length)
+        cr.rectangle(x, y, h, e_length)
         cr.fill()
 
         # Intellectual cycle
         cr.set_source_rgba(*style.Color(self._COLOR_SECONDS).get_rgba())
-        cr.rectangle(x + 200, y, h, i_length)
+        cr.rectangle(x + 70, y, h, i_length)
         cr.fill()
 
     def _draw_time(self):
