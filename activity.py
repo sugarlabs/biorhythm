@@ -37,6 +37,21 @@ class Activity(activity.Activity):
         activity.Activity.__init__(self, handle)
 
         self.max_participants = 1
+
+        self.days = []
+        self.days.append(31)
+        self.days.append(28)
+        self.days.append(31)
+        self.days.append(30)
+        self.days.append(31)
+        self.days.append(30)
+        self.days.append(31)
+        self.days.append(31)
+        self.days.append(30)
+        self.days.append(31)
+        self.days.append(30)
+        self.days.append(31)
+
         self._now = datetime.now()
 
         self._birth = [31, 12, 2011]
@@ -87,12 +102,12 @@ class Activity(activity.Activity):
         birth_bar.insert(item1, -1)
 
         item2 = gtk.ToolItem()
-        self.day_spin = gtk.SpinButton()
-        self.day_spin.set_range(1, 31)
-        self.day_spin.set_increments(1, 5)
-        self.day_spin.props.value = 31
-        self.day_spin.connect('notify::value', self.day_birth_change)
-        item2.add(self.day_spin)
+        self.day_birth_spin = gtk.SpinButton()
+        self.day_birth_spin.set_range(1, 31)
+        self.day_birth_spin.set_increments(1, 5)
+        self.day_birth_spin.props.value = 31
+        self.day_birth_spin.connect('notify::value', self.day_birth_change)
+        item2.add(self.day_birth_spin)
         birth_bar.insert(item2, -1)
 
         item3 = gtk.ToolItem()
@@ -102,12 +117,12 @@ class Activity(activity.Activity):
         birth_bar.insert(item3, -1)
 
         item4 = gtk.ToolItem()
-        self.month_spin = gtk.SpinButton()
-        self.month_spin.set_range(1, 12)
-        self.month_spin.set_increments(1, 4)
-        self.month_spin.props.value = 12
-        self.month_spin.connect('notify::value', self.month_birth_change)
-        item4.add(self.month_spin)
+        self.month_birth_spin = gtk.SpinButton()
+        self.month_birth_spin.set_range(1, 12)
+        self.month_birth_spin.set_increments(1, 4)
+        self.month_birth_spin.props.value = 12
+        self.month_birth_spin.connect('notify::value', self.month_birth_change)
+        item4.add(self.month_birth_spin)
         birth_bar.insert(item4, -1)
 
         item5 = gtk.ToolItem()
@@ -117,12 +132,12 @@ class Activity(activity.Activity):
         birth_bar.insert(item5, -1)
 
         item6 = gtk.ToolItem()
-        self.year_spin = gtk.SpinButton()
-        self.year_spin.set_range(1900, 2012)
-        self.year_spin.set_increments(1, 10)
-        self.year_spin.props.value = 2011
-        self.year_spin.connect('notify::value', self.year_birth_change)
-        item6.add(self.year_spin)
+        self.year_birth_spin = gtk.SpinButton()
+        self.year_birth_spin.set_range(1900, 2012)
+        self.year_birth_spin.set_increments(1, 10)
+        self.year_birth_spin.props.value = 2011
+        self.year_birth_spin.connect('notify::value', self.year_birth_change)
+        item6.add(self.year_birth_spin)
         birth_bar.insert(item6, -1)
 
         birth_bar.show_all()
@@ -143,12 +158,12 @@ class Activity(activity.Activity):
         today_bar.insert(item1, -1)
 
         item2 = gtk.ToolItem()
-        self.day_spin = gtk.SpinButton()
-        self.day_spin.set_range(1, 31)
-        self.day_spin.set_increments(1, 5)
-        self.day_spin.props.value = self._today[0]
-        self.day_spin.connect('notify::value', self.day_today_change)
-        item2.add(self.day_spin)
+        self.day_today_spin = gtk.SpinButton()
+        self.day_today_spin.set_range(1, 31)
+        self.day_today_spin.set_increments(1, 5)
+        self.day_today_spin.props.value = self._today[0]
+        self.day_today_spin.connect('notify::value', self.day_today_change)
+        item2.add(self.day_today_spin)
         today_bar.insert(item2, -1)
 
         item3 = gtk.ToolItem()
@@ -158,12 +173,12 @@ class Activity(activity.Activity):
         today_bar.insert(item3, -1)
 
         item4 = gtk.ToolItem()
-        self.month_spin = gtk.SpinButton()
-        self.month_spin.set_range(1, 12)
-        self.month_spin.set_increments(1, 4)
-        self.month_spin.props.value = self._today[1]
-        self.month_spin.connect('notify::value', self.month_today_change)
-        item4.add(self.month_spin)
+        self.month_today_spin = gtk.SpinButton()
+        self.month_today_spin.set_range(1, 12)
+        self.month_today_spin.set_increments(1, 4)
+        self.month_today_spin.props.value = self._today[1]
+        self.month_today_spin.connect('notify::value', self.month_today_change)
+        item4.add(self.month_today_spin)
         today_bar.insert(item4, -1)
 
         item5 = gtk.ToolItem()
@@ -173,12 +188,12 @@ class Activity(activity.Activity):
         today_bar.insert(item5, -1)
 
         item6 = gtk.ToolItem()
-        self.year_spin = gtk.SpinButton()
-        self.year_spin.set_range(1900, 2012)
-        self.year_spin.set_increments(1, 10)
-        self.year_spin.props.value = self._today[2]
-        self.year_spin.connect('notify::value', self.year_today_change)
-        item6.add(self.year_spin)
+        self.year_today_spin = gtk.SpinButton()
+        self.year_today_spin.set_range(1900, 2012)
+        self.year_today_spin.set_increments(1, 10)
+        self.year_today_spin.props.value = self._today[2]
+        self.year_today_spin.connect('notify::value', self.year_today_change)
+        item6.add(self.year_today_spin)
         today_bar.insert(item6, -1)
 
         today_bar.show_all()
@@ -192,38 +207,70 @@ class Activity(activity.Activity):
     # BIRTH
     def day_birth_change(self, day, value):
         self._birth[0] = int(day.props.value)
+        self.adjust_day_birth()
         self.calculate_bio()
 
     def month_birth_change(self, month, value):
         self._birth[1] = int(month.props.value)
+        self.adjust_day_birth()
         self.calculate_bio()
 
     def year_birth_change(self, year, value):
         self._birth[2] = int(year.props.value)
+        self.adjust_day_birth()
         self.calculate_bio()
 
     # TODAY
     def day_today_change(self, day, value):
         self._today[0] = int(day.props.value)
+        self.adjust_day_today()
         self.calculate_bio()
 
     def month_today_change(self, month, value):
         self._today[1] = int(month.props.value)
+        self.adjust_day_today()
         self.calculate_bio()
 
     def year_today_change(self, year, value):
         self._today[2] = int(year.props.value)
+        self.adjust_day_today()
         self.calculate_bio()
 
     def calculate_bio(self):
-        birth = date(self._birth[2], self._birth[1], self._birth[0])
-        bio = date(self._today[2], self._today[1], self._today[0])
-        self._bio = self._biorhytm.calc(birth, bio)
-        self._biorhytm._draw_digital_clock()
+        self._bio = self._biorhytm.calc()
+        self._biorhytm._draw_biorhytm()
+
+    def _is_leap(self, year):
+        return (((year % 4) == 0 and (year % 100) <> 0) or (year % 400) == 0)
+
+    def adjust_day_birth(self):
+        leap = 0
+
+        if (self._birth[1] == 2) and self._is_leap(self._birth[2]):
+            leap = 1
+
+        d = self.days[self._birth[1] - 1] + leap
+
+        if self._birth[0] > d: 
+            self.day_birth_spin.props.value = d
+
+        #vsbDayBirth.Min = Days(vsbMonthBirth.Value) + IsLeap
+
+    def adjust_day_today(self):
+        leap = 0
+
+        if (self._today[1] == 2) and self._is_leap(self._today[2]):
+            leap = 1
+
+        d = self.days[self._today[1] - 1] + leap
+
+        if self._today[0] > d: 
+            self.day_today_spin.props.value = d
+
 
     def _make_display(self):
 
-        self._biorhytm = BiorhytmImage()
+        self._biorhytm = Biorhytm(self)
 
         # The label to print the time in full letters
         self._time_letters = gtk.Label()
@@ -246,14 +293,15 @@ class Activity(activity.Activity):
         self.set_canvas(vbox)
 
 
-class BiorhytmImage(gtk.DrawingArea):
+class Biorhytm(gtk.DrawingArea):
 
 
-    def __init__(self):
+    def __init__(self, parent):
 
-        super(BiorhytmImage, self).__init__()
+        super(Biorhytm, self).__init__()
 
-        # Set to True when the variables to draw the clock are set:
+        self._parent = parent
+
         self.initialized = False
 
         self._time = datetime.now()
@@ -262,53 +310,49 @@ class BiorhytmImage(gtk.DrawingArea):
         self._active = False
 
 
-        self._scale = 200
+        self._scale = 250
         self._line_width = 2
 
 
-        # XO Medium Blue
-        self._COLOR_HOURS = "#005FE4"
-
-        # XO Medium Green
-        self._COLOR_MINUTES = "#00B20D"
-
-        # XO Medium Red
-        self._COLOR_SECONDS = "#E6000A"
-
-        # White
+        self._COLOR_P = "#005FE4"
+        self._COLOR_E = "#00B20D"
+        self._COLOR_I = "#E6000A"
         self._COLOR_WHITE = "#FFFFFF"
-
-        # Black
         self._COLOR_BLACK = "#000000"
 
         # gtk.Widget signals
         self.connect("expose-event", self._expose_cb)
         self.connect("size-allocate", self._size_allocate_cb)
 
+        
 
-    def calc(self, birth, bio_date):
+    def calc(self):
 
-        dif = bio_date - birth
+        b = self._parent._birth
+        t = self._parent._today
 
-        NumbersDays = dif.days
+        birth = date(b[2], b[1], b[0])
+        today = date(t[2], t[1], t[0])
+
+        dif = today - birth
 
         # Physical cycle
-        p = sin(2 * 3.14159 * NumbersDays / 23)
+        p = sin(2 * 3.14159 * dif.days / 23)
 
         # Emotional cycle
-        e = sin(2 * 3.14159 * NumbersDays / 28)
+        e = sin(2 * 3.14159 * dif.days / 28)
 
         # Intellectual cycle
-        i = sin(2 * 3.14159 * NumbersDays / 33)
+        i = sin(2 * 3.14159 * dif.days / 33)
 
-        #print 'bio', p, e, i
         self._bio = (p, e, i)
+
         return self._bio
 
 
-    def _draw_digital_clock(self):
+    def _draw_biorhytm(self):
         self._draw_time_scale()
-        #self._draw_time()
+        self._draw_time()
 
     def _draw_time_scale(self):
 
@@ -318,57 +362,58 @@ class BiorhytmImage(gtk.DrawingArea):
 
         # Fill background
         cr = self.window.cairo_create()
-        h = 50
+        width = 70
         x = self._center_x
         y = self._center_y
 
         cr.set_source_rgba(*style.Color(self._COLOR_WHITE).get_rgba())
-        cr.rectangle(self._center_x-85,
+        cr.rectangle(self._center_x-(width + 30)-35,
                      (self._center_y - self._scale-10),
-                     220,
+                     3*width + 2*20 + 20,
                      self._scale*2+20)
         cr.fill()
 
 
-
         # Physical cycle
-        cr.set_source_rgba(*style.Color(self._COLOR_HOURS).get_rgba())
-        cr.rectangle(x-70, y, h, p_length)
+        cr.set_source_rgba(*style.Color(self._COLOR_P).get_rgba())
+        cr.rectangle(x - (width + 20)-35, y, width, p_length)
         cr.fill()
 
         # Emotional cycle
-        cr.set_source_rgba(*style.Color(self._COLOR_MINUTES).get_rgba())
-        cr.rectangle(x, y, h, e_length)
+        cr.set_source_rgba(*style.Color(self._COLOR_E).get_rgba())
+        cr.rectangle(x-35, y, width, e_length)
         cr.fill()
 
         # Intellectual cycle
-        cr.set_source_rgba(*style.Color(self._COLOR_SECONDS).get_rgba())
-        cr.rectangle(x + 70, y, h, i_length)
+        cr.set_source_rgba(*style.Color(self._COLOR_I).get_rgba())
+        cr.rectangle(x-35 + (width + 20), y, width, i_length)
         cr.fill()
 
     def _draw_time(self):
 
 
         markup = _('<markup>\
-<span lang="en" font_desc="Sans,Monospace Bold 64">\
+<span lang="en" font_desc="Sans,Monospace Bold 12">\
 <span foreground="#E6000A">%s</span></span></markup>')
 
         cr = self.window.cairo_create()
-        cr = pangocairo.CairoContext(cr)
-        cr.set_source_rgba(*style.Color(self._COLOR_BLACK).get_rgba())
-        pango_layout = cr.create_layout()
-        d = int(self._center_y + 0.3 * self._scale)
-        markup = markup % "prueba2"
 
-        pango_layout.set_markup(markup)
+        cr = pangocairo.CairoContext(cr)
+        cr.set_source_rgba(*style.Color(self._COLOR_E).get_rgba())
+        pango_layout = cr.create_layout()
+        d = int(self._center_y + self._scale + 20)
+        markup_f = markup % "Physical Emotional Intellectual"
+        pango_layout.set_markup(markup_f)
         dx, dy = pango_layout.get_pixel_size()
         pango_layout.set_alignment(pango.ALIGN_CENTER)
-        cr.translate(self._center_x - dx / 2.0, d - dy / 2.0)
+        cr.translate(self._center_x - dx / 2.0, d - dy / 2.0 + 5)
         cr.show_layout(pango_layout)
+
 
     def _expose_cb(self, widget, event):
         #self.queue_resize()
-        self._draw_digital_clock()
+        self.calc()
+        self._draw_biorhytm()
         pass
 
     def _size_allocate_cb(self, widget, allocation):
