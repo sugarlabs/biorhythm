@@ -1,0 +1,19 @@
+<?xml version="1.0" ?><!DOCTYPE svg  PUBLIC '-//W3C//DTD SVG 1.1//EN'  'http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd' [
+	<!ENTITY stroke_color "none">
+	<!ENTITY fill_color "#000000">
+]><svg contentScriptType="text/ecmascript" contentStyleType="text/css" height="55px" id="svg2" inkscape:version="0.48.3.1 r9886" preserveAspectRatio="xMidYMid meet" sodipodi:docname="biorhythm.svg" style="" version="1.1" width="55px" xmlns="http://www.w3.org/2000/svg" xmlns:cc="http://creativecommons.org/ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd" xmlns:svg="http://www.w3.org/2000/svg" zoomAndPan="magnify">
+  <metadata id="metadata30" style="">
+    <rdf:RDF style="">
+      <cc:Work rdf:about="" style="">
+        <dc:format style="">image/svg+xml</dc:format>
+        <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage" style=""/>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <defs id="defs28" style=""/>
+  <sodipodi:namedview bordercolor="#666666" borderopacity="1" gridtolerance="10" guidetolerance="10" id="namedview26" inkscape:current-layer="svg2" inkscape:cx="49.545642" inkscape:cy="25.51005" inkscape:pageopacity="0" inkscape:pageshadow="2" inkscape:window-height="744" inkscape:window-maximized="1" inkscape:window-width="1366" inkscape:window-x="0" inkscape:window-y="24" inkscape:zoom="4.2909091" objecttolerance="10" pagecolor="#ffffff" showgrid="false" style=""/>
+  <rect height="18.948301" id="rect3007" style="fill:#ff0000;fill-opacity:1;stroke:#ff0000;stroke-width:1.89175677;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" width="10.487288" x="36.76791" y="6.1763554"/>
+  <rect height="20.883879" id="rect3007-8" style="fill:#0000ff;fill-opacity:1;stroke:#0000ff;stroke-width:1.98602962;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" transform="scale(1,-1)" width="10.487288" x="21.105238" y="-25.162216"/>
+  <rect height="20.900881" id="rect3007-8-1" style="fill:#00ff00;fill-opacity:1;stroke:#00ff00;stroke-width:1.98683786;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" transform="scale(1,-1)" width="10.487288" x="5.2977619" y="-49.156578"/>
+  <text id="text3053" sodipodi:linespacing="125%" style="font-size:30px;font-style:normal;font-weight:bold;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:&fill_color;;fill-opacity:1;stroke:&stroke_color;;font-family:Sans;-inkscape-font-specification:Sans Bold" x="23.235651" xml:space="preserve" y="50.221039"><tspan id="tspan3055" sodipodi:role="line" style="" x="23.235651" y="50.221039">B</tspan></text>
+</svg>
