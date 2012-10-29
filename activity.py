@@ -62,8 +62,7 @@ class Activity(activity.Activity):
         self._make_display()
         self.show_all()
 
-        
-        #self.calculate_bio()
+        #'alto', 'critico', 'bajo'
 
     def build_toolbar(self):
 
@@ -272,25 +271,25 @@ class Activity(activity.Activity):
 
         self._biorhytm = Biorhytm(self)
 
+        """
         # The label to print the time in full letters
         self._time_letters = gtk.Label()
-        self._time_letters.set_no_show_all(True)
-
+        #self._time_letters.set_no_show_all(True)
         self._time_letters.set_markup('holaaaaa')
 
         # The label to write the date
         self._date = gtk.Label()
-        self._date.set_no_show_all(True)
+        #self._date.set_no_show_all(True)
         self._date.set_markup('pepe')
 
         # Put all these widgets in a vertical box
         vbox = gtk.VBox(False)
         vbox.pack_start(self._biorhytm, True)
         vbox.pack_start(self._time_letters, False)
-        vbox.pack_start(self._date, False)
+        vbox.pack_start(self._date, False)"""
 
         # Attach the display to the activity
-        self.set_canvas(vbox)
+        self.set_canvas(self._biorhytm)
 
 
 class Biorhytm(gtk.DrawingArea):
@@ -408,7 +407,6 @@ class Biorhytm(gtk.DrawingArea):
         pango_layout.set_alignment(pango.ALIGN_CENTER)
         cr.translate(self._center_x - dx / 2.0, d - dy / 2.0 + 5)
         cr.show_layout(pango_layout)
-
 
     def _expose_cb(self, widget, event):
         #self.queue_resize()
