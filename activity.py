@@ -1,32 +1,19 @@
 #! /usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import sys
-
-
-import gobject
-gobject.threads_init()
-
-import pygtk
 import gtk
-from gtk import gdk
+import pango
+import pangocairo
 
 from sugar.activity import activity
 from sugar.graphics.toolbarbox import ToolbarBox
-from sugar.graphics.toolbutton import ToolButton
 from sugar.activity.widgets import ActivityToolbarButton
 from sugar.activity.widgets import StopButton
 from sugar.graphics.toolbarbox import ToolbarButton
-
 from sugar.graphics import style
-import pango
-import gst
-import cairo
-import pangocairo
 
 from math import sin
 from datetime import date
-
 from datetime import datetime
 
 from gettext import gettext as _
@@ -59,7 +46,10 @@ class Activity(activity.Activity):
         self._bio = [1, 1, 1]
 
         self.build_toolbar()
-        self._make_display()
+
+        self._biorhytm = Biorhytm(self)
+        self.set_canvas(self._biorhytm)
+
         self.show_all()
 
         #'alto', 'critico', 'bajo'
@@ -253,8 +243,6 @@ class Activity(activity.Activity):
         if self._birth[0] > d: 
             self.day_birth_spin.props.value = d
 
-        #vsbDayBirth.Min = Days(vsbMonthBirth.Value) + IsLeap
-
     def adjust_day_today(self):
         leap = 0
 
@@ -266,30 +254,6 @@ class Activity(activity.Activity):
         if self._today[0] > d: 
             self.day_today_spin.props.value = d
 
-
-    def _make_display(self):
-
-        self._biorhytm = Biorhytm(self)
-
-        """
-        # The label to print the time in full letters
-        self._time_letters = gtk.Label()
-        #self._time_letters.set_no_show_all(True)
-        self._time_letters.set_markup('holaaaaa')
-
-        # The label to write the date
-        self._date = gtk.Label()
-        #self._date.set_no_show_all(True)
-        self._date.set_markup('pepe')
-
-        # Put all these widgets in a vertical box
-        vbox = gtk.VBox(False)
-        vbox.pack_start(self._biorhytm, True)
-        vbox.pack_start(self._time_letters, False)
-        vbox.pack_start(self._date, False)"""
-
-        # Attach the display to the activity
-        self.set_canvas(self._biorhytm)
 
 
 class Biorhytm(gtk.DrawingArea):
@@ -372,7 +336,6 @@ class Biorhytm(gtk.DrawingArea):
                      self._scale*2+20)
         cr.fill()
 
-
         # Physical cycle
         cr.set_source_rgba(*style.Color(self._COLOR_P).get_rgba())
         cr.rectangle(x - (width + 20)-35, y, width, p_length)
@@ -409,24 +372,16 @@ class Biorhytm(gtk.DrawingArea):
         cr.show_layout(pango_layout)
 
     def _expose_cb(self, widget, event):
-        #self.queue_resize()
         self.calc()
         self._draw_biorhytm()
-        pass
 
     def _size_allocate_cb(self, widget, allocation):
-
-        # Store the measures of the clock face widget
         self._center_x = int(allocation.width / 2.0)
         self._center_y = int(allocation.height / 2.0)
 
     def _redraw_canvas(self):
-        #self.queue_draw()
-        #self.window.process_updates(True)
         pass
 
     def _update_cb(self):
-        # update the time and force a redraw of the clock
-        self._time = datetime.now()
+        pass
 
-        #gobject.idle_add(self._redraw_canvas)
