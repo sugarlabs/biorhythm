@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-05-25 04:19-0300\n"
-"PO-Revision-Date: 2013-05-26 03:37+0200\n"
+"POT-Creation-Date: 2013-05-26 00:34-0400\n"
+"PO-Revision-Date: 2013-05-27 03:14+0200\n"
 "Last-Translator: Chris <cjl@laptop.org>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: en\n"
@@ -17,9 +17,14 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Generator: Pootle 2.0.5\n"
 
-#: activity/activity.info:2
+#. TRANS: "name" option from activity.info file
 msgid "Biorhythm"
 msgstr "Biorhythm"
+
+#. TRANS: "summary" option from activity.info file
+#. TRANS: "description" option from activity.info file
+msgid "An activity that calcs your biorhythm"
+msgstr "An activity that calculates your biorhythms"
 
 #: activity.py:74
 msgid "<Ctrl>Q"
