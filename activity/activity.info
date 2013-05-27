@@ -6,4 +6,4 @@ exec = sugar-activity activity.Activity
 show_launcher = yes
 icon = biorhythm
 license = GPLv3+
-summary = An activity that calcs your biorhythm
+summary = An activity that calculates your biorhythms
