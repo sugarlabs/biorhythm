@@ -1,6 +1,6 @@
 [Activity]
 name = Biorhythm
-activity_version = 1
+activity_version = 2
 bundle_id = org.ceibaljam.biorhythm
 exec = sugar-activity activity.Activity
 show_launcher = yes
