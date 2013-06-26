@@ -122,7 +122,7 @@ class Activity(activity.Activity):
 
         item6 = gtk.ToolItem()
         self.year_birth_spin = gtk.SpinButton()
-        self.year_birth_spin.set_range(1900, 2012)
+        self.year_birth_spin.set_range(1900, 2013)
         self.year_birth_spin.set_increments(1, 10)
         self.year_birth_spin.props.value = 2011
         self.year_birth_spin.connect('notify::value', self.year_birth_change)
@@ -178,7 +178,7 @@ class Activity(activity.Activity):
 
         item6 = gtk.ToolItem()
         self.year_today_spin = gtk.SpinButton()
-        self.year_today_spin.set_range(1900, 2012)
+        self.year_today_spin.set_range(1900, 2013)
         self.year_today_spin.set_increments(1, 10)
         self.year_today_spin.props.value = self._today[2]
         self.year_today_spin.connect('notify::value', self.year_today_change)
