@@ -2,61 +2,61 @@
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-#, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-05-27 00:34-0400\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"PO-Revision-Date: 2013-07-08 21:16+0200\n"
+"Last-Translator: anushnur <anush.mkrtchyan@ca1492.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
-"Language: \n"
+"Language: hy\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Translate Toolkit 1.7.0\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"X-Generator: Pootle 2.0.5\n"
 
 #. TRANS: "name" option from activity.info file
 msgid "Biorhythm"
-msgstr ""
+msgstr "Կենսառիթմ"
 
 #. TRANS: "summary" option from activity.info file
 #. TRANS: "description" option from activity.info file
 msgid "An activity that calculates your biorhythms"
-msgstr ""
+msgstr "Գործունեություն, որը հաշվարկում է կենսառիթմը"
 
 #: activity.py:74
 msgid "<Ctrl>Q"
-msgstr ""
+msgstr "<Ctrl>Q"
 
 #: activity.py:89
 msgid "Birth:"
-msgstr ""
+msgstr "Ծնունդ:"
 
 #: activity.py:89 activity.py:145
 msgid "Day"
-msgstr ""
+msgstr "Օր"
 
 #: activity.py:104 activity.py:160
 msgid "Month"
-msgstr ""
+msgstr "Ամիս"
 
 #: activity.py:119 activity.py:175
 msgid "Year"
-msgstr ""
+msgstr "Տարի"
 
 #: activity.py:133
 msgid "Birth"
-msgstr ""
+msgstr "Ծնունդ"
 
 #: activity.py:145
 msgid "Today:"
-msgstr ""
+msgstr "Այսօր:"
 
 #: activity.py:189
 msgid "Today"
-msgstr ""
+msgstr "Այսօր"
 
 #: activity.py:357
 #, python-format
@@ -64,3 +64,5 @@ msgid ""
 "<markup><span lang=\"en\" font_desc=\"Sans,Monospace Bold 12\"><span "
 "foreground=\"#E6000A\">%s</span></span></markup>"
 msgstr ""
+"<markup><span lang=\"en\" font_desc=\"Sans,Monospace Bold 12\"><span "
+"foreground=\"#E6000A\">%s</span></span></markup>"
