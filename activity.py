@@ -41,7 +41,7 @@ class Activity(activity.Activity):
 
         self._now = datetime.now()
 
-        self._birth = [31, 12, 2011]
+        self._birth = [10, 2, 1990]
         self._today = [self._now.day, self._now.month, self._now.year]
         self._bio = [1, 1, 1]
 
@@ -94,7 +94,7 @@ class Activity(activity.Activity):
         self.day_birth_spin = gtk.SpinButton()
         self.day_birth_spin.set_range(1, 31)
         self.day_birth_spin.set_increments(1, 5)
-        self.day_birth_spin.props.value = 31
+        self.day_birth_spin.props.value = 10
         self.day_birth_spin.connect('notify::value', self.day_birth_change)
         item2.add(self.day_birth_spin)
         birth_bar.insert(item2, -1)
@@ -109,7 +109,7 @@ class Activity(activity.Activity):
         self.month_birth_spin = gtk.SpinButton()
         self.month_birth_spin.set_range(1, 12)
         self.month_birth_spin.set_increments(1, 4)
-        self.month_birth_spin.props.value = 12
+        self.month_birth_spin.props.value = 2
         self.month_birth_spin.connect('notify::value', self.month_birth_change)
         item4.add(self.month_birth_spin)
         birth_bar.insert(item4, -1)
@@ -122,9 +122,9 @@ class Activity(activity.Activity):
 
         item6 = gtk.ToolItem()
         self.year_birth_spin = gtk.SpinButton()
-        self.year_birth_spin.set_range(1900, 2013)
+        self.year_birth_spin.set_range(1900, self._now.year)
         self.year_birth_spin.set_increments(1, 10)
-        self.year_birth_spin.props.value = 2011
+        self.year_birth_spin.props.value = 1990
         self.year_birth_spin.connect('notify::value', self.year_birth_change)
         item6.add(self.year_birth_spin)
         birth_bar.insert(item6, -1)
@@ -178,7 +178,7 @@ class Activity(activity.Activity):
 
         item6 = gtk.ToolItem()
         self.year_today_spin = gtk.SpinButton()
-        self.year_today_spin.set_range(1900, 2013)
+        self.year_today_spin.set_range(1900, self._now.year + 1)
         self.year_today_spin.set_increments(1, 10)
         self.year_today_spin.props.value = self._today[2]
         self.year_today_spin.connect('notify::value', self.year_today_change)
@@ -260,7 +260,6 @@ class Biorhytm(gtk.DrawingArea):
 
 
     def __init__(self, parent):
-
         super(Biorhytm, self).__init__()
 
         self._parent = parent
