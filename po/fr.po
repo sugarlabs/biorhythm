@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-05-27 00:34-0400\n"
-"PO-Revision-Date: 2016-05-20 00:55+0000\n"
-"Last-Translator: Chris <cjl@sugarlabs.org>\n"
+"PO-Revision-Date: 2016-12-21 21:05+0000\n"
+"Last-Translator: agathe <agathe.battestini@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: fr\n"
 "MIME-Version: 1.0\n"
@@ -17,16 +17,16 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 "X-Generator: Pootle 2.5.1.1\n"
-"X-POOTLE-MTIME: 1463705759.000000\n"
+"X-POOTLE-MTIME: 1482354303.000000\n"
 
 #. TRANS: "name" option from activity.info file
 msgid "Biorhythm"
-msgstr ""
+msgstr "Biorythme"
 
 #. TRANS: "summary" option from activity.info file
 #. TRANS: "description" option from activity.info file
 msgid "An activity that calculates your biorhythms"
-msgstr ""
+msgstr "Une activité qui calcule tes biorythmes"
 
 #: activity.py:74
 msgid "<Ctrl>Q"
@@ -34,7 +34,7 @@ msgstr "<Ctrl>Q"
 
 #: activity.py:89
 msgid "Birth:"
-msgstr ""
+msgstr "Naissance:"
 
 #: activity.py:89 activity.py:145
 msgid "Day"
@@ -50,15 +50,13 @@ msgstr "Année"
 
 #: activity.py:133
 msgid "Birth"
-msgstr ""
+msgstr "Naissance"
 
 #: activity.py:145
-#, fuzzy
 msgid "Today:"
 msgstr "Aujourd'hui:"
 
 #: activity.py:189
-#, fuzzy
 msgid "Today"
 msgstr "Aujourd'hui"
 
