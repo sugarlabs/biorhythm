@@ -8,16 +8,16 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-05-27 00:34-0400\n"
-"PO-Revision-Date: 2017-03-29 02:48+0000\n"
-"Last-Translator: Chris <cjl@sugarlabs.org>\n"
+"PO-Revision-Date: 2017-01-18 15:46+0000\n"
+"Last-Translator: Elias <elias.secchi@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
-"Language: pap\n"
+"Language: it\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Generator: Pootle 2.5.1.1\n"
-"X-POOTLE-MTIME: 1490755701.000000\n"
+"X-POOTLE-MTIME: 1484754372.000000\n"
 
 #. TRANS: "name" option from activity.info file
 msgid "Biorhythm"
@@ -26,39 +26,41 @@ msgstr "Bioritmo"
 #. TRANS: "summary" option from activity.info file
 #. TRANS: "description" option from activity.info file
 msgid "An activity that calculates your biorhythms"
-msgstr "Un aktividat ku ta kalkulá bo bioritmo"
+msgstr "Un'attività che calcola i tuoi bioritmi"
 
 #: activity.py:74
+#, fuzzy
 msgid "<Ctrl>Q"
 msgstr "<Ctrl>Q"
 
 #: activity.py:89
+#, fuzzy
 msgid "Birth:"
-msgstr "Nasementu"
+msgstr "Nato il:"
 
 #: activity.py:89 activity.py:145
 msgid "Day"
-msgstr "Dia"
+msgstr "Giorno"
 
 #: activity.py:104 activity.py:160
 msgid "Month"
-msgstr "Luna"
+msgstr "Mese"
 
 #: activity.py:119 activity.py:175
 msgid "Year"
-msgstr "Aña"
+msgstr "Anno"
 
 #: activity.py:133
 msgid "Birth"
-msgstr "Nasementu"
+msgstr ""
 
 #: activity.py:145
 msgid "Today:"
-msgstr "Awe"
+msgstr "Oggi:"
 
 #: activity.py:189
 msgid "Today"
-msgstr "Awe"
+msgstr "Oggi"
 
 #: activity.py:357
 #, python-format
@@ -66,5 +68,3 @@ msgid ""
 "<markup><span lang=\"en\" font_desc=\"Sans,Monospace Bold 12\"><span "
 "foreground=\"#E6000A\">%s</span></span></markup>"
 msgstr ""
-"<markup><span lang=\"pap\" font_desc=\"Sans,Monospace Bold 12\"><span "
-"foreground=\"#E6000A\">%s</span></span></markup>"

@@ -8,57 +8,58 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-05-27 00:34-0400\n"
-"PO-Revision-Date: 2017-03-29 02:48+0000\n"
-"Last-Translator: Chris <cjl@sugarlabs.org>\n"
+"PO-Revision-Date: 2016-10-18 11:17+0000\n"
+"Last-Translator: smadi <smadi.am@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
-"Language: pap\n"
+"Language: ar\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 "
+"&& n%100<=10 ? 3 : n%100>=11 ? 4 : 5;\n"
 "X-Generator: Pootle 2.5.1.1\n"
-"X-POOTLE-MTIME: 1490755701.000000\n"
+"X-POOTLE-MTIME: 1476789442.000000\n"
 
 #. TRANS: "name" option from activity.info file
 msgid "Biorhythm"
-msgstr "Bioritmo"
+msgstr "نظام بيولوجي"
 
 #. TRANS: "summary" option from activity.info file
 #. TRANS: "description" option from activity.info file
 msgid "An activity that calculates your biorhythms"
-msgstr "Un aktividat ku ta kalkulá bo bioritmo"
+msgstr "النشاط الذي يحسب نظامك البيولوجي"
 
 #: activity.py:74
 msgid "<Ctrl>Q"
-msgstr "<Ctrl>Q"
+msgstr "Ctrl+ض"
 
 #: activity.py:89
 msgid "Birth:"
-msgstr "Nasementu"
+msgstr "الميلاد"
 
 #: activity.py:89 activity.py:145
 msgid "Day"
-msgstr "Dia"
+msgstr "يوم"
 
 #: activity.py:104 activity.py:160
 msgid "Month"
-msgstr "Luna"
+msgstr "شهر"
 
 #: activity.py:119 activity.py:175
 msgid "Year"
-msgstr "Aña"
+msgstr "سنة"
 
 #: activity.py:133
 msgid "Birth"
-msgstr "Nasementu"
+msgstr "الميلاد"
 
 #: activity.py:145
 msgid "Today:"
-msgstr "Awe"
+msgstr "اليوم:"
 
 #: activity.py:189
 msgid "Today"
-msgstr "Awe"
+msgstr "اليوم"
 
 #: activity.py:357
 #, python-format
@@ -66,5 +67,5 @@ msgid ""
 "<markup><span lang=\"en\" font_desc=\"Sans,Monospace Bold 12\"><span "
 "foreground=\"#E6000A\">%s</span></span></markup>"
 msgstr ""
-"<markup><span lang=\"pap\" font_desc=\"Sans,Monospace Bold 12\"><span "
+"<markup><span lang=\"en\" font_desc=\"Sans,Monospace Bold 12\"><span "
 "foreground=\"#E6000A\">%s</span></span></markup>"
