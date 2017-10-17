@@ -3,65 +3,68 @@
 # This file is distributed under the same license as the PACKAGE package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 #
-#, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-10-17 12:13+1100\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"POT-Creation-Date: 2013-05-27 00:34-0400\n"
+"PO-Revision-Date: 2017-02-10 12:09+0000\n"
+"Last-Translator: andika <andika@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
-"Language: \n"
+"Language: id\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: Pootle 2.5.1.1\n"
+"X-POOTLE-MTIME: 1486728586.000000\n"
 
 #. TRANS: "name" option from activity.info file
-#: activity/activity.info:2
 msgid "Biorhythm"
-msgstr ""
+msgstr "Bioritme"
 
 #. TRANS: "summary" option from activity.info file
 #. TRANS: "description" option from activity.info file
 msgid "An activity that calculates your biorhythms"
-msgstr ""
+msgstr "Aktivitas yang menghitung bioritme Anda"
 
 #: activity.py:74
 msgid "<Ctrl>Q"
-msgstr ""
+msgstr "<Ctrl>Q"
 
 #: activity.py:89
 msgid "Birth:"
-msgstr ""
+msgstr "Lahir:"
 
 #: activity.py:89 activity.py:145
 msgid "Day"
-msgstr ""
+msgstr "Tanggal"
 
 #: activity.py:104 activity.py:160
 msgid "Month"
-msgstr ""
+msgstr "Bulan"
 
 #: activity.py:119 activity.py:175
 msgid "Year"
-msgstr ""
+msgstr "Tahun"
 
 #: activity.py:133
 msgid "Birth"
-msgstr ""
+msgstr "Lahir"
 
 #: activity.py:145
 msgid "Today:"
-msgstr ""
+msgstr "Hari Ini:"
 
 #: activity.py:189
 msgid "Today"
-msgstr ""
+msgstr "Hari Ini"
 
-#: activity.py:356
+#: activity.py:357
 #, python-format
 msgid ""
 "<markup><span lang=\"en\" font_desc=\"Sans,Monospace Bold 12\"><span "
 "foreground=\"#E6000A\">%s</span></span></markup>"
 msgstr ""
+"<markup><span lang=\"en\" font_desc=\"Sans,Monospace Bold 12\"><span "
+"foreground=\"#E6000A\">%s</span></span></markup>"
