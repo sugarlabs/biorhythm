@@ -51,8 +51,8 @@ class Activity(activity.Activity):
 
         self.build_toolbar()
 
-        self._biorhytm = Biorhytm(self)
-        self.set_canvas(self._biorhytm)
+        self._biorhythm = Biorhythm(self)
+        self.set_canvas(self._biorhythm)
 
         self.show_all()
 
@@ -230,7 +230,7 @@ class Activity(activity.Activity):
         self.calculate_bio()
 
     def calculate_bio(self):
-        self._bio = self._biorhytm.calc()
+        self._bio = self._biorhythm.calc()
         self.queue_draw()
 
     def _is_leap(self, year):
@@ -260,11 +260,11 @@ class Activity(activity.Activity):
 
 
 
-class Biorhytm(Gtk.DrawingArea):
+class Biorhythm(Gtk.DrawingArea):
 
 
     def __init__(self, parent):
-        super(Biorhytm, self).__init__()
+        super(Biorhythm, self).__init__()
 
         self._parent = parent
 
@@ -316,7 +316,7 @@ class Biorhytm(Gtk.DrawingArea):
         return self._bio
 
 
-    def _draw_biorhytm(self, cr):
+    def _draw_biorhythm(self, cr):
         self._draw_time_scale(cr)
         self._draw_time(cr)
 
@@ -372,7 +372,7 @@ class Biorhytm(Gtk.DrawingArea):
 
     def _draw_cb(self, widget, cr):
         self.calc()
-        self._draw_biorhytm(cr)
+        self._draw_biorhythm(cr)
         return True
 
     def _size_allocate_cb(self, widget, allocation):
