@@ -234,7 +234,7 @@ class Activity(activity.Activity):
         self._biorhytm._draw_biorhytm()
 
     def _is_leap(self, year):
-        return (((year % 4) == 0 and (year % 100) <> 0) or (year % 400) == 0)
+        return (year % 4 == 0 and not year % 100 == 0) or year % 400 == 0
 
     def adjust_day_birth(self):
         leap = 0
