@@ -287,7 +287,7 @@ class Biorhytm(Gtk.DrawingArea):
         self._COLOR_BLACK = "#000000"
 
         # Gtk.Widget signals
-        self.connect("draw", self._expose_cb)
+        self.connect("draw", self._draw_cb)
         self.connect("size-allocate", self._size_allocate_cb)
 
 
@@ -373,7 +373,7 @@ class Biorhytm(Gtk.DrawingArea):
         cr.translate(self._center_x - dx / 2.0, d - dy / 2.0 + 5)
         pangocairo.show_layout(cr, pango_layout)
 
-    def _expose_cb(self, widget, event):
+    def _draw_cb(self, widget, event):
         self.calc()
         self._draw_biorhytm()
 
