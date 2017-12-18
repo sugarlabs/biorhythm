@@ -376,6 +376,7 @@ class Biorhytm(Gtk.DrawingArea):
     def _draw_cb(self, widget, event):
         self.calc()
         self._draw_biorhytm()
+        return True
 
     def _size_allocate_cb(self, widget, allocation):
         self._center_x = int(allocation.width / 2.0)
