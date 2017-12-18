@@ -316,18 +316,20 @@ class Biorhytm(Gtk.DrawingArea):
         return self._bio
 
 
-    def _draw_biorhytm(self):
-        self._draw_time_scale()
-        self._draw_time()
+    def _draw_biorhytm(self, cairo_context=None):
+        if cairo_context == None:
+            cairo_context = self.get_property('window').cairo_create()
+        self._draw_time_scale(cairo_context)
+        self._draw_time(cairo_context)
 
-    def _draw_time_scale(self):
+    def _draw_time_scale(self, cairo_context):
 
         p_length = int(self._bio[0] * self._scale)
         e_length = int(self._bio[1] * self._scale)
         i_length = int(self._bio[2] * self._scale)
 
         # Fill background
-        cr = self.get_property('window').cairo_create()
+        cr = cairo_context
         width = 70
         x = self._center_x
         y = self._center_y
@@ -354,14 +356,14 @@ class Biorhytm(Gtk.DrawingArea):
         cr.rectangle(x-35 + (width + 20), y, width, i_length)
         cr.fill()
 
-    def _draw_time(self):
+    def _draw_time(self, cairo_context):
 
 
         markup = _('<markup>\
 <span lang="en" font_desc="Sans,Monospace Bold 12">\
 <span foreground="#E6000A">%s</span></span></markup>')
 
-        cr = self.get_property('window').cairo_create()
+        cr = cairo_context
 
         cr.set_source_rgba(*style.Color(self._COLOR_E).get_rgba())
         pango_layout = pangocairo.create_layout(cr)
@@ -373,9 +375,9 @@ class Biorhytm(Gtk.DrawingArea):
         cr.translate(self._center_x - dx / 2.0, d - dy / 2.0 + 5)
         pangocairo.show_layout(cr, pango_layout)
 
-    def _draw_cb(self, widget, event):
+    def _draw_cb(self, widget, cairo_context):
         self.calc()
-        self._draw_biorhytm()
+        self._draw_biorhytm(cairo_context)
         return True
 
     def _size_allocate_cb(self, widget, allocation):
