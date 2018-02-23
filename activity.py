@@ -45,7 +45,11 @@ class Activity(activity.Activity):
 
         self._now = datetime.now()
 
-        self._birth = [10, 2, 1990]
+        if "birth" in self.metadata:
+            birth = self.metadata["birth"].split("/")
+            self._birth = map(int, birth)
+        else:
+            self._birth = [1, 1, 2010]
         self._today = [self._now.day, self._now.month, self._now.year]
         self._bio = [1, 1, 1]
 
@@ -98,7 +102,7 @@ class Activity(activity.Activity):
         self.day_birth_spin = Gtk.SpinButton()
         self.day_birth_spin.set_range(1, 31)
         self.day_birth_spin.set_increments(1, 5)
-        self.day_birth_spin.props.value = 10
+        self.day_birth_spin.props.value = self._birth[0]
         self.day_birth_spin.connect('notify::value', self.day_birth_change)
         item2.add(self.day_birth_spin)
         birth_bar.insert(item2, -1)
@@ -113,7 +117,7 @@ class Activity(activity.Activity):
         self.month_birth_spin = Gtk.SpinButton()
         self.month_birth_spin.set_range(1, 12)
         self.month_birth_spin.set_increments(1, 4)
-        self.month_birth_spin.props.value = 2
+        self.month_birth_spin.props.value = self._birth[1]
         self.month_birth_spin.connect('notify::value', self.month_birth_change)
         item4.add(self.month_birth_spin)
         birth_bar.insert(item4, -1)
@@ -128,7 +132,7 @@ class Activity(activity.Activity):
         self.year_birth_spin = Gtk.SpinButton()
         self.year_birth_spin.set_range(1900, self._now.year)
         self.year_birth_spin.set_increments(1, 10)
-        self.year_birth_spin.props.value = 1990
+        self.year_birth_spin.props.value = self._birth[2]
         self.year_birth_spin.connect('notify::value', self.year_birth_change)
         item6.add(self.year_birth_spin)
         birth_bar.insert(item6, -1)
@@ -258,6 +262,8 @@ class Activity(activity.Activity):
         if self._today[0] > d:
             self.day_today_spin.props.value = d
 
+    def write_file(self, filepath):
+        self.metadata["birth"] = "/".join(map(str, self._birth))
 
 
 class Biorhythm(Gtk.DrawingArea):
