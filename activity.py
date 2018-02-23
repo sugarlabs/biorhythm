@@ -22,6 +22,7 @@ from datetime import datetime
 
 from gettext import gettext as _
 
+
 class Activity(activity.Activity):
 
     def __init__(self, handle):
@@ -139,8 +140,8 @@ class Activity(activity.Activity):
 
         birth_bar.show_all()
         birth_button = ToolbarButton(label=_('Birth'),
-                page=birth_bar,
-                icon_name='write-date')
+                                     page=birth_bar,
+                                     icon_name='write-date')
         toolbox.toolbar.insert(birth_button, -1)
         birth_button.show()
 
@@ -195,11 +196,10 @@ class Activity(activity.Activity):
 
         today_bar.show_all()
         today_button = ToolbarButton(label=_('Today'),
-                page=today_bar,
-                icon_name='write-time')
+                                     page=today_bar,
+                                     icon_name='write-time')
         toolbox.toolbar.insert(today_button, -1)
         today_button.show()
-
 
     # BIRTH
     def day_birth_change(self, day, value):
@@ -268,7 +268,6 @@ class Activity(activity.Activity):
 
 class Biorhythm(Gtk.DrawingArea):
 
-
     def __init__(self, parent):
         super(Biorhythm, self).__init__()
 
@@ -281,10 +280,8 @@ class Biorhythm(Gtk.DrawingArea):
 
         self._active = False
 
-
         self._scale = 250
         self._line_width = 2
-
 
         self._COLOR_P = "#005FE4"
         self._COLOR_E = "#00B20D"
@@ -295,8 +292,6 @@ class Biorhythm(Gtk.DrawingArea):
         # Gtk.Widget signals
         self.connect("draw", self._draw_cb)
         self.connect("size-allocate", self._size_allocate_cb)
-
-
 
     def calc(self):
 
@@ -321,7 +316,6 @@ class Biorhythm(Gtk.DrawingArea):
 
         return self._bio
 
-
     def _draw_biorhythm(self, cr):
         self._draw_time_scale(cr)
         self._draw_time(cr)
@@ -338,29 +332,28 @@ class Biorhythm(Gtk.DrawingArea):
         y = self._center_y
 
         cr.set_source_rgba(*style.Color(self._COLOR_WHITE).get_rgba())
-        cr.rectangle(self._center_x-(width + 30)-35,
-                     (self._center_y - self._scale-10),
-                     3*width + 2*20 + 20,
-                     self._scale*2+20)
+        cr.rectangle(self._center_x - (width + 30) - 35,
+                     (self._center_y - self._scale - 10),
+                     3 * width + 2 * 20 + 20,
+                     self._scale * 2 + 20)
         cr.fill()
 
         # Physical cycle
         cr.set_source_rgba(*style.Color(self._COLOR_P).get_rgba())
-        cr.rectangle(x - (width + 20)-35, y, width, p_length)
+        cr.rectangle(x - (width + 20) - 35, y, width, p_length)
         cr.fill()
 
         # Emotional cycle
         cr.set_source_rgba(*style.Color(self._COLOR_E).get_rgba())
-        cr.rectangle(x-35, y, width, e_length)
+        cr.rectangle(x - 35, y, width, e_length)
         cr.fill()
 
         # Intellectual cycle
         cr.set_source_rgba(*style.Color(self._COLOR_I).get_rgba())
-        cr.rectangle(x-35 + (width + 20), y, width, i_length)
+        cr.rectangle(x - 35 + (width + 20), y, width, i_length)
         cr.fill()
 
     def _draw_time(self, cr):
-
 
         markup = _('<markup>\
 <span lang="en" font_desc="Sans,Monospace Bold 12">\
@@ -390,4 +383,3 @@ class Biorhythm(Gtk.DrawingArea):
 
     def _update_cb(self):
         pass
-
