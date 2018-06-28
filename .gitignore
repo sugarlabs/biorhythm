@@ -1,5 +1,9 @@
 *.pyc
-*.pyo
-*.xo
-*.py~
-
+*~
+locale
+dist
+po.original
+po.merged
+*.rej
+*.patch
+*.bak
