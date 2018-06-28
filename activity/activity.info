@@ -1,9 +1,11 @@
 [Activity]
 name = Biorhythm
 activity_version = 3
+license = GPLv3+
 bundle_id = org.ceibaljam.biorhythm
 exec = sugar-activity activity.Activity
 show_launcher = yes
 icon = biorhythm
-license = GPLv3+
 summary = An activity that calculates your biorhythms
+repository = https://github.com/sugarlabs/biorhythm
+tags = Utilities; Health
