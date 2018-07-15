@@ -1,5 +1,8 @@
 *.pyc
 *~
+*.pyo
+*.xo	
+*.py~
 locale
 dist
 po.original

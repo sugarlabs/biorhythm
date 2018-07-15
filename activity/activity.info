@@ -8,4 +8,4 @@ show_launcher = yes
 icon = biorhythm
 summary = An activity that calculates your biorhythms
 repository = https://github.com/sugarlabs/biorhythm
-tags = Utilities; Health
+tags = Science
