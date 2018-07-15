@@ -79,7 +79,7 @@ class Activity(activity.Activity):
 
         self.show_all()
 
-        #'alto', 'critico', 'bajo'
+        # 'alto', 'critico', 'bajo'
 
     def build_toolbar(self):
 
