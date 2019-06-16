@@ -34,10 +34,12 @@ from sugar3.graphics.toolbarbox import ToolbarButton
 from sugar3.graphics import style
 
 from math import sin
-from datetime import date
-from datetime import datetime
+from datetime import date, datetime, timedelta
 
 from gettext import gettext as _
+
+from matplotlib.figure import Figure
+from matplotlib.backends.backend_gtk3agg import FigureCanvasGTK3Agg as FigureCanvas
 
 
 class Activity(activity.Activity):
@@ -72,9 +74,12 @@ class Activity(activity.Activity):
         self._bio = [1, 1, 1]
 
         self.build_toolbar()
+        self._container = Gtk.Box()
 
         self._biorhythm = Biorhythm(self)
-        self.set_canvas(self._biorhythm)
+        self._container.pack_start(self._biorhythm, True, True, 0)
+        self._container.pack_start(self._biorhythm.canvas, True, True, 0)
+        self.set_canvas(self._container)
 
         self.show_all()
 
@@ -306,6 +311,10 @@ class Biorhythm(Gtk.DrawingArea):
         self._COLOR_WHITE = "#FFFFFF"
         self._COLOR_BLACK = "#000000"
 
+        self.initial_plot()
+        self._x_axis = [-7, -6, -5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5, 6, 7]
+        self.alt_check = 0
+
         # Gtk.Widget signals
         self.connect("draw", self._draw_cb)
         self.connect("size-allocate", self._size_allocate_cb)
@@ -389,6 +398,8 @@ class Biorhythm(Gtk.DrawingArea):
     def _draw_cb(self, widget, cr):
         self.calc()
         self._draw_biorhythm(cr)
+        # Draw the Graph
+        self._draw_graph(cr)
         return True
 
     def _size_allocate_cb(self, widget, allocation):
@@ -400,3 +411,50 @@ class Biorhythm(Gtk.DrawingArea):
 
     def _update_cb(self):
         pass
+
+    def initial_plot(self):
+        self.figure = Figure(figsize=(100, 100))
+        self.axes = self.figure.add_subplot(111)
+        self.canvas = FigureCanvas(self.figure)
+        self.canvas.set_size_request(700, 400)
+
+    def calculate_graph_values(self):
+        self.alt_check += 1
+        self.axes.clear()
+        p = []
+        e = []
+        i = []
+        labels = []
+        b = self._parent._birth
+        t = self._parent._today
+        birth = date(b[2], b[1], b[0])
+        today = date(t[2], t[1], t[0])
+
+        for diff in range(0, 15):
+            each_day = today + timedelta(days=diff - 7)
+            dif = each_day - birth
+            p.append(sin(2 * 3.14159 * dif.days / 23) * self._scale)
+            e.append(sin(2 * 3.14159 * dif.days / 28) * self._scale)
+            i.append(sin(2 * 3.14159 * dif.days / 33) * self._scale)
+            labels.append(str(each_day))
+
+        self.axes.set_xlabel("Day", {'size': 'x-large', 'family': 'monospace', 'style': 'italic'})
+        self.axes.set_ylabel("Score", {'size': 'x-large', 'family': 'monospace', 'style': 'italic'})
+        self.axes.plot(labels, p, 'b', label='Physical')
+        self.axes.plot(labels, e, 'g', label='Emotional')
+        self.axes.plot(labels, i, 'r', label='Intellectual')
+        self.axes.grid(True)
+
+        for n, label in enumerate(self.axes.xaxis.get_ticklabels()):
+            if self.alt_check % 2:
+                if n % 2 == 0:
+                    label.set_visible(False)
+            else:
+                if n % 2 != 0:
+                    label.set_visible(False)
+        self.axes.legend()
+
+    def _draw_graph(self, cr):
+        self.calculate_graph_values()
+        self.figure.canvas.draw()
+        self.figure.canvas.flush_events()
