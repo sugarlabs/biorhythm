@@ -40,6 +40,7 @@ from gettext import gettext as _
 
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_gtk3agg import FigureCanvasGTK3Agg as FigureCanvas
+from matplotlib.ticker import AutoMinorLocator, ScalarFormatter
 
 
 class Activity(activity.Activity):
@@ -311,9 +312,8 @@ class Biorhythm(Gtk.DrawingArea):
         self._COLOR_WHITE = "#FFFFFF"
         self._COLOR_BLACK = "#000000"
 
+        self._x_axis = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
         self.initial_plot()
-        self._x_axis = [-7, -6, -5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5, 6, 7]
-        self.alt_check = 0
 
         # Gtk.Widget signals
         self.connect("draw", self._draw_cb)
@@ -323,10 +323,11 @@ class Biorhythm(Gtk.DrawingArea):
 
         b = self._parent._birth
         t = self._parent._today
-
-        birth = date(b[2], b[1], b[0])
-        today = date(t[2], t[1], t[0])
-
+        try:
+            birth = date(b[2], b[1], b[0])
+            today = date(t[2], t[1], t[0])
+        except ValueError:
+            return
         dif = today - birth
 
         # Physical cycle
@@ -415,11 +416,11 @@ class Biorhythm(Gtk.DrawingArea):
     def initial_plot(self):
         self.figure = Figure(figsize=(100, 100))
         self.axes = self.figure.add_subplot(111)
+        self.axes.set_xticks(self._x_axis, minor=True)
         self.canvas = FigureCanvas(self.figure)
         self.canvas.set_size_request(700, 400)
 
     def calculate_graph_values(self):
-        self.alt_check += 1
         self.axes.clear()
         p = []
         e = []
@@ -430,28 +431,46 @@ class Biorhythm(Gtk.DrawingArea):
         birth = date(b[2], b[1], b[0])
         today = date(t[2], t[1], t[0])
 
-        for diff in range(0, 15):
-            each_day = today + timedelta(days=diff - 7)
-            dif = each_day - birth
-            p.append(sin(2 * 3.14159 * dif.days / 23) * self._scale)
-            e.append(sin(2 * 3.14159 * dif.days / 28) * self._scale)
-            i.append(sin(2 * 3.14159 * dif.days / 33) * self._scale)
+        for diff in self._x_axis:
+            each_day = today + timedelta(days=diff - 8)
             labels.append(str(each_day))
+            dif = each_day - birth
+            p.append(int(sin(2 * 3.14159 * dif.days / 23) * self._scale * -1))
+            e.append(int(sin(2 * 3.14159 * dif.days / 28) * self._scale * -1))
+            i.append(int(sin(2 * 3.14159 * dif.days / 33) * self._scale * -1))
 
+        al = AutoMinorLocator(n=2)
+        sf = ScalarFormatter()
         self.axes.set_xlabel("Day", {'size': 'x-large', 'family': 'monospace', 'style': 'italic'})
         self.axes.set_ylabel("Score", {'size': 'x-large', 'family': 'monospace', 'style': 'italic'})
-        self.axes.plot(labels, p, 'b', label='Physical')
-        self.axes.plot(labels, e, 'g', label='Emotional')
-        self.axes.plot(labels, i, 'r', label='Intellectual')
-        self.axes.grid(True)
+        self.axes.xaxis.set_minor_locator(al)
+        self.axes.xaxis.set_minor_formatter(sf)
 
-        for n, label in enumerate(self.axes.xaxis.get_ticklabels()):
-            if self.alt_check % 2:
-                if n % 2 == 0:
-                    label.set_visible(False)
-            else:
-                if n % 2 != 0:
-                    label.set_visible(False)
+        self.axes.plot(self._x_axis, p, 'b', label='Physical')
+        self.axes.plot(self._x_axis, e, 'g', label='Emotional')
+        self.axes.plot(self._x_axis, i, 'r', label='Intellectual')
+        self.axes.grid(True)
+        x_major = [''] + labels[1::2]
+        x_minor_labels = self.axes.set_xticklabels(labels[0::2], minor=True)
+        x_major_labels = self.axes.set_xticklabels(x_major, minor=False)
+
+        for label in x_major_labels:
+            match = [None, None, None]
+            try:
+                match[2] = int((label.get_text().encode('ascii', 'ignore').split('-')[0]))
+                match[1] = int((label.get_text().encode('ascii', 'ignore').split('-')[1]))
+                match[0] = int((label.get_text().encode('ascii', 'ignore').split('-')[2]))
+            except ValueError:
+                continue
+            if match[0] == t[0] and match[1] == t[1] and match[2] == t[2]:
+                label.set_color('purple')
+                label.set_fontweight('bold')
+            label.set_fontsize('small')
+            label.set_rotation(45)
+        for label in x_minor_labels:
+            label.set_fontsize('small')
+            label.set_visible(True)
+            label.set_rotation(45)
         self.axes.legend()
 
     def _draw_graph(self, cr):
