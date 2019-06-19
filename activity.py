@@ -38,10 +38,13 @@ from datetime import date, datetime, timedelta
 
 from gettext import gettext as _
 
-from matplotlib.figure import Figure
-from matplotlib.backends.backend_gtk3agg import FigureCanvasGTK3Agg as FigureCanvas
-from matplotlib.ticker import AutoMinorLocator, ScalarFormatter
-
+try:
+    from matplotlib.figure import Figure
+    from matplotlib.backends.backend_gtk3agg import FigureCanvasGTK3Agg as FigureCanvas
+    from matplotlib.ticker import AutoMinorLocator, ScalarFormatter
+    import_plot = True
+except ImportError:
+    import_plot = False
 
 class Activity(activity.Activity):
 
@@ -312,8 +315,9 @@ class Biorhythm(Gtk.DrawingArea):
         self._COLOR_WHITE = "#FFFFFF"
         self._COLOR_BLACK = "#000000"
 
-        self._x_axis = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
-        self.initial_plot()
+        if import_plot:
+            self._x_axis = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
+            self.initial_plot()
 
         # Gtk.Widget signals
         self.connect("draw", self._draw_cb)
@@ -400,7 +404,8 @@ class Biorhythm(Gtk.DrawingArea):
         self.calc()
         self._draw_biorhythm(cr)
         # Draw the Graph
-        self._draw_graph(cr)
+        if import_plot:
+            self._draw_graph(cr)
         return True
 
     def _size_allocate_cb(self, widget, allocation):
