@@ -21,7 +21,7 @@
 import gi
 gi.require_version('Gtk', '3.0')
 gi.require_version('PangoCairo', '1.0')
-from gi.repository import Gtk
+from gi.repository import Gtk, Gdk
 
 from gi.repository import Pango as pango
 from gi.repository import PangoCairo as pangocairo
@@ -82,7 +82,10 @@ class Activity(activity.Activity):
 
         self._biorhythm = Biorhythm(self)
         self._container.pack_start(self._biorhythm, True, True, 0)
-        self._container.pack_start(self._biorhythm.canvas, True, True, 0)
+        if import_plot:
+            figure = Figure(figsize=(100, 100))
+            self._plot = Plot(self, figure)
+            self._container.pack_start(self._plot, True, True, 0)
         self.set_canvas(self._container)
 
         self.show_all()
@@ -315,10 +318,6 @@ class Biorhythm(Gtk.DrawingArea):
         self._COLOR_WHITE = "#FFFFFF"
         self._COLOR_BLACK = "#000000"
 
-        if import_plot:
-            self._x_axis = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
-            self.initial_plot()
-
         # Gtk.Widget signals
         self.connect("draw", self._draw_cb)
         self.connect("size-allocate", self._size_allocate_cb)
@@ -403,9 +402,6 @@ class Biorhythm(Gtk.DrawingArea):
     def _draw_cb(self, widget, cr):
         self.calc()
         self._draw_biorhythm(cr)
-        # Draw the Graph
-        if import_plot:
-            self._draw_graph(cr)
         return True
 
     def _size_allocate_cb(self, widget, allocation):
@@ -418,12 +414,23 @@ class Biorhythm(Gtk.DrawingArea):
     def _update_cb(self):
         pass
 
-    def initial_plot(self):
-        self.figure = Figure(figsize=(100, 100))
-        self.axes = self.figure.add_subplot(111)
+class Plot(FigureCanvas):
+
+    def __init__(self, parent, figure):
+        super(Plot, self).__init__(figure)
+        self.figure = figure
+        self._parent = parent
+
+        self._x_axis = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
+        self._scale = 250
+
+        self.axes = self.figure.add_subplot(111) # Here is the error
         self.axes.set_xticks(self._x_axis, minor=True)
-        self.canvas = FigureCanvas(self.figure)
-        self.canvas.set_size_request(700, 400)
+
+        self.connect("draw", self._draw_cb)
+
+    def _draw_cb(self, widget, cr):
+        self.calculate_graph_values()
 
     def calculate_graph_values(self):
         self.axes.clear()
@@ -443,11 +450,11 @@ class Biorhythm(Gtk.DrawingArea):
             p.append(int(sin(2 * 3.14159 * dif.days / 23) * self._scale * -1))
             e.append(int(sin(2 * 3.14159 * dif.days / 28) * self._scale * -1))
             i.append(int(sin(2 * 3.14159 * dif.days / 33) * self._scale * -1))
-
         al = AutoMinorLocator(n=2)
         sf = ScalarFormatter()
-        self.axes.set_xlabel("Day", {'size': 'x-large', 'family': 'monospace', 'style': 'italic'})
-        self.axes.set_ylabel("Score", {'size': 'x-large', 'family': 'monospace', 'style': 'italic'})
+        disp_args = {'size': 'x-large', 'family': 'monospace', 'style': 'italic'}
+        self.axes.set_xlabel("Day", disp_args)
+        self.axes.set_ylabel("Score", disp_args)
         self.axes.xaxis.set_minor_locator(al)
         self.axes.xaxis.set_minor_formatter(sf)
 
@@ -477,8 +484,3 @@ class Biorhythm(Gtk.DrawingArea):
             label.set_visible(True)
             label.set_rotation(45)
         self.axes.legend()
-
-    def _draw_graph(self, cr):
-        self.calculate_graph_values()
-        self.figure.canvas.draw()
-        self.figure.canvas.flush_events()
