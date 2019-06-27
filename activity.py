@@ -42,6 +42,8 @@ try:
     from matplotlib.figure import Figure
     from matplotlib.backends.backend_gtk3agg import FigureCanvasGTK3Agg as FigureCanvas
     from matplotlib.ticker import AutoMinorLocator, ScalarFormatter
+    import numpy as np
+    from scipy.interpolate import spline
     import_plot = True
 except ImportError:
     import_plot = False
@@ -463,10 +465,13 @@ class Plot(FigureCanvas):
     def calculate_graph_values(self):
         self.axes.clear()
         t = self._parent._today
-
-        self.axes.plot(self._x_axis, self.p, 'b', label='Physical')
-        self.axes.plot(self._x_axis, self.e, 'g', label='Emotional')
-        self.axes.plot(self._x_axis, self.i, 'r', label='Intellectual')
+        x_smooth = np.linspace(self._x_axis[0], self._x_axis[-1] , 200)
+        smooth_p = spline(self._x_axis, self.p, x_smooth)
+        smooth_e = spline(self._x_axis, self.e, x_smooth)
+        smooth_i = spline(self._x_axis, self.i, x_smooth)
+        self.axes.plot(x_smooth, smooth_p, 'b', label='Physical')
+        self.axes.plot(x_smooth, smooth_e, 'g', label='Emotional')
+        self.axes.plot(x_smooth, smooth_i, 'r', label='Intellectual')
         self.flush_events()
         al = AutoMinorLocator(n=2)
         sf = ScalarFormatter()
