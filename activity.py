@@ -263,8 +263,8 @@ class Activity(activity.Activity):
         self.calculate_bio()
 
     def calculate_bio(self):
-        self._bio = self._biorhythm.calc()
-        self.queue_draw()
+        self._biorhythm.queue_draw()
+        self._plot.queue_draw()
 
     def _is_leap(self, year):
         return (year % 4 == 0 and not year % 100 == 0) or year % 400 == 0
@@ -424,46 +424,61 @@ class Plot(FigureCanvas):
         self._x_axis = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
         self._scale = 250
 
-        self.axes = self.figure.add_subplot(111) # Here is the error
+        self.axes = self.figure.add_subplot(111)
         self.axes.set_xticks(self._x_axis, minor=True)
+
+        self.disp_args = {'size': 'x-large', 'family': 'monospace', 'style': 'italic'}
 
         self.connect("draw", self._draw_cb)
 
-    def _draw_cb(self, widget, cr):
-        self.calculate_graph_values()
 
-    def calculate_graph_values(self):
-        self.axes.clear()
-        p = []
-        e = []
-        i = []
-        labels = []
+    def _draw_cb(self, widget, cr):
+        self.calc()
+        self.calculate_graph_values()
+        self.axes.draw_artist(self.axes)
+        return True
+
+    def calc(self):
+        self.p = []
+        self.e = []
+        self.i = []
+        self.labels = []
+
         b = self._parent._birth
         t = self._parent._today
-        birth = date(b[2], b[1], b[0])
-        today = date(t[2], t[1], t[0])
+        try:
+            birth = date(b[2], b[1], b[0])
+            today = date(t[2], t[1], t[0])
+        except ValueError:
+            return
 
         for diff in self._x_axis:
             each_day = today + timedelta(days=diff - 8)
-            labels.append(str(each_day))
+            self.labels.append(str(each_day))
             dif = each_day - birth
-            p.append(int(sin(2 * 3.14159 * dif.days / 23) * self._scale * -1))
-            e.append(int(sin(2 * 3.14159 * dif.days / 28) * self._scale * -1))
-            i.append(int(sin(2 * 3.14159 * dif.days / 33) * self._scale * -1))
+            self.p.append(int(sin(2 * 3.14159 * dif.days / 23) * self._scale * -1))
+            self.e.append(int(sin(2 * 3.14159 * dif.days / 28) * self._scale * -1))
+            self.i.append(int(sin(2 * 3.14159 * dif.days / 33) * self._scale * -1))
+
+    def calculate_graph_values(self):
+        self.axes.clear()
+        t = self._parent._today
+
+        self.axes.plot(self._x_axis, self.p, 'b', label='Physical')
+        self.axes.plot(self._x_axis, self.e, 'g', label='Emotional')
+        self.axes.plot(self._x_axis, self.i, 'r', label='Intellectual')
+        self.flush_events()
         al = AutoMinorLocator(n=2)
         sf = ScalarFormatter()
-        disp_args = {'size': 'x-large', 'family': 'monospace', 'style': 'italic'}
-        self.axes.set_xlabel("Day", disp_args)
-        self.axes.set_ylabel("Score", disp_args)
+
+        self.axes.set_xlabel("Day", self.disp_args)
+        self.axes.set_ylabel("Score", self.disp_args)
         self.axes.xaxis.set_minor_locator(al)
         self.axes.xaxis.set_minor_formatter(sf)
 
-        self.axes.plot(self._x_axis, p, 'b', label='Physical')
-        self.axes.plot(self._x_axis, e, 'g', label='Emotional')
-        self.axes.plot(self._x_axis, i, 'r', label='Intellectual')
         self.axes.grid(True)
-        x_major = [''] + labels[1::2]
-        x_minor_labels = self.axes.set_xticklabels(labels[0::2], minor=True)
+        x_major = [''] + self.labels[1::2]
+        x_minor_labels = self.axes.set_xticklabels(self.labels[0::2], minor=True)
         x_major_labels = self.axes.set_xticklabels(x_major, minor=False)
 
         for label in x_major_labels:
