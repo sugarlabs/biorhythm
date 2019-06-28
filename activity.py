@@ -266,7 +266,8 @@ class Activity(activity.Activity):
 
     def calculate_bio(self):
         self._biorhythm.queue_draw()
-        self._plot.queue_draw()
+        self._plot.calc()
+        self._plot.calculate_graph_values()
 
     def _is_leap(self, year):
         return (year % 4 == 0 and not year % 100 == 0) or year % 400 == 0
@@ -431,21 +432,10 @@ class Plot(FigureCanvas):
 
         self.disp_args = {'size': 'x-large', 'family': 'monospace', 'style': 'italic'}
 
-        self.connect("draw", self._draw_cb)
-
-
-    def _draw_cb(self, widget, cr):
         self.calc()
         self.calculate_graph_values()
-        self.axes.draw_artist(self.axes)
-        return True
 
     def calc(self):
-        self.p = []
-        self.e = []
-        self.i = []
-        self.labels = []
-
         b = self._parent._birth
         t = self._parent._today
         try:
@@ -453,6 +443,11 @@ class Plot(FigureCanvas):
             today = date(t[2], t[1], t[0])
         except ValueError:
             return
+
+        self.p = []
+        self.e = []
+        self.i = []
+        self.labels = []
 
         for diff in self._x_axis:
             each_day = today + timedelta(days=diff - 8)
@@ -469,13 +464,13 @@ class Plot(FigureCanvas):
         smooth_p = spline(self._x_axis, self.p, x_smooth)
         smooth_e = spline(self._x_axis, self.e, x_smooth)
         smooth_i = spline(self._x_axis, self.i, x_smooth)
+
         self.axes.plot(x_smooth, smooth_p, 'b', label='Physical')
         self.axes.plot(x_smooth, smooth_e, 'g', label='Emotional')
         self.axes.plot(x_smooth, smooth_i, 'r', label='Intellectual')
-        self.flush_events()
+
         al = AutoMinorLocator(n=2)
         sf = ScalarFormatter()
-
         self.axes.set_xlabel("Day", self.disp_args)
         self.axes.set_ylabel("Score", self.disp_args)
         self.axes.xaxis.set_minor_locator(al)
@@ -504,3 +499,4 @@ class Plot(FigureCanvas):
             label.set_visible(True)
             label.set_rotation(45)
         self.axes.legend()
+        self.queue_draw()
