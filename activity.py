@@ -21,7 +21,7 @@
 import gi
 gi.require_version('Gtk', '3.0')
 gi.require_version('PangoCairo', '1.0')
-from gi.repository import Gtk, Gdk
+from gi.repository import Gtk
 
 from gi.repository import Pango as pango
 from gi.repository import PangoCairo as pangocairo
@@ -37,16 +37,22 @@ from math import sin
 from datetime import date, datetime, timedelta
 
 from gettext import gettext as _
+import logging
 
 try:
     from matplotlib.figure import Figure
-    from matplotlib.backends.backend_gtk3agg import FigureCanvasGTK3Agg as FigureCanvas
+    from matplotlib.backends.backend_gtk3agg \
+        import FigureCanvasGTK3Agg as FigureCanvas
     from matplotlib.ticker import AutoMinorLocator, ScalarFormatter
     import numpy as np
     from scipy.interpolate import spline
-    import_plot = True
+    import_plot_error = False
 except ImportError:
-    import_plot = False
+    import_plot_error = True
+    logging.error('Please install the libraries python-scipy, \
+    python-numpy and python-matplotlib through apt or \
+    your favourite package manager, to display the line graph')
+
 
 class Activity(activity.Activity):
 
@@ -84,9 +90,9 @@ class Activity(activity.Activity):
 
         self._biorhythm = Biorhythm(self)
         self._container.pack_start(self._biorhythm, True, True, 0)
-        if import_plot:
+        if not import_plot_error:
             figure = Figure(figsize=(100, 100))
-            self._plot = Plot(self, figure)
+            self._plot = LineGraph(self, figure)
             self._container.pack_start(self._plot, True, True, 0)
         self.set_canvas(self._container)
 
@@ -232,6 +238,16 @@ class Activity(activity.Activity):
         toolbox.toolbar.insert(today_button, -1)
         today_button.show()
 
+    def get_dates(self):
+        b = self._birth
+        t = self._today
+        try:
+            birth = date(b[2], b[1], b[0])
+            today = date(t[2], t[1], t[0])
+        except ValueError:
+            raise ValueError('Reached end of the month or the beginning')
+        return birth, today
+
     # BIRTH
     def day_birth_change(self, day, value):
         self._birth[0] = int(day.props.value)
@@ -326,14 +342,12 @@ class Biorhythm(Gtk.DrawingArea):
         self.connect("size-allocate", self._size_allocate_cb)
 
     def calc(self):
-
-        b = self._parent._birth
-        t = self._parent._today
         try:
-            birth = date(b[2], b[1], b[0])
-            today = date(t[2], t[1], t[0])
-        except ValueError:
+            birth, today = self._parent.get_dates()
+        except ValueError as e:
+            logging.error(e)
             return
+
         dif = today - birth
 
         # Physical cycle
@@ -417,10 +431,11 @@ class Biorhythm(Gtk.DrawingArea):
     def _update_cb(self):
         pass
 
-class Plot(FigureCanvas):
+
+class LineGraph(FigureCanvas):
 
     def __init__(self, parent, figure):
-        super(Plot, self).__init__(figure)
+        super(LineGraph, self).__init__(figure)
         self.figure = figure
         self._parent = parent
 
@@ -430,18 +445,17 @@ class Plot(FigureCanvas):
         self.axes = self.figure.add_subplot(111)
         self.axes.set_xticks(self._x_axis, minor=True)
 
-        self.disp_args = {'size': 'x-large', 'family': 'monospace', 'style': 'italic'}
+        self.disp_args = {'size': 'x-large',
+            'family': 'monospace', 'style': 'italic'}
 
         self.calc()
         self.calculate_graph_values()
 
     def calc(self):
-        b = self._parent._birth
-        t = self._parent._today
         try:
-            birth = date(b[2], b[1], b[0])
-            today = date(t[2], t[1], t[0])
-        except ValueError:
+            birth, today = self._parent.get_dates()
+        except ValueError as e:
+            logging.error(e)
             return
 
         self.p = []
@@ -460,7 +474,7 @@ class Plot(FigureCanvas):
     def calculate_graph_values(self):
         self.axes.clear()
         t = self._parent._today
-        x_smooth = np.linspace(self._x_axis[0], self._x_axis[-1] , 200)
+        x_smooth = np.linspace(self._x_axis[0], self._x_axis[-1], 200)
         smooth_p = spline(self._x_axis, self.p, x_smooth)
         smooth_e = spline(self._x_axis, self.e, x_smooth)
         smooth_i = spline(self._x_axis, self.i, x_smooth)
@@ -484,9 +498,15 @@ class Plot(FigureCanvas):
         for label in x_major_labels:
             match = [None, None, None]
             try:
-                match[2] = int((label.get_text().encode('ascii', 'ignore').split('-')[0]))
-                match[1] = int((label.get_text().encode('ascii', 'ignore').split('-')[1]))
-                match[0] = int((label.get_text().encode('ascii', 'ignore').split('-')[2]))
+                match[2] = int((label.get_text()
+                           .encode('ascii', 'ignore')
+                           .split('-')[0]))
+                match[1] = int((label.get_text()
+                           .encode('ascii', 'ignore')
+                           .split('-')[1]))
+                match[0] = int((label.get_text()
+                           .encode('ascii', 'ignore')
+                           .split('-')[2]))
             except ValueError:
                 continue
             if match[0] == t[0] and match[1] == t[1] and match[2] == t[2]:
