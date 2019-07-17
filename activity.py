@@ -47,10 +47,10 @@ try:
     from matplotlib.ticker import AutoMinorLocator, ScalarFormatter
     import numpy as np
     from scipy.interpolate import spline
-    import_plot_error = False
-    raise ImportError()
+    successful_import = True
+
 except ImportError:
-    import_plot_error = True
+    successful_import = False
     logging.error("Please install the libraries python-scipy, python-numpy \
 and python-matplotlib through apt or your favourite package \
 manager, to display the line graph")
@@ -94,7 +94,7 @@ class Activity(activity.Activity):
 
         self._biorhythm = Biorhythm(self)
         self._container.pack_start(self._biorhythm, True, True, 0)
-        if not import_plot_error:
+        if successful_import:
             figure = Figure()
             self._plot = LineGraph(self, figure)
             self._container.pack_start(self._plot, True, True, 0)
