@@ -22,6 +22,7 @@ import gi
 gi.require_version('Gtk', '3.0')
 gi.require_version('PangoCairo', '1.0')
 from gi.repository import Gtk
+from gi.repository import Gdk
 
 from gi.repository import Pango as pango
 from gi.repository import PangoCairo as pangocairo
@@ -75,6 +76,7 @@ class Activity(activity.Activity):
         self.days.append(30)
         self.days.append(31)
 
+        self._activity_size = Gdk.Screen.get_default()
         self._now = datetime.now()
 
         if "birth" in self.metadata:
@@ -87,11 +89,12 @@ class Activity(activity.Activity):
 
         self.build_toolbar()
         self._container = Gtk.Box()
+        self._container.set_homogeneous(False)
 
         self._biorhythm = Biorhythm(self)
         self._container.pack_start(self._biorhythm, True, True, 0)
         if not import_plot_error:
-            figure = Figure(figsize=(100, 100))
+            figure = Figure()
             self._plot = LineGraph(self, figure)
             self._container.pack_start(self._plot, True, True, 0)
         self.set_canvas(self._container)
@@ -323,6 +326,9 @@ class Biorhythm(Gtk.DrawingArea):
 
         self.initialized = False
 
+        self.set_size_request(int(self._parent._activity_size.get_width()*0.25),
+                              int(self._parent._activity_size.get_height())*0.8)
+
         self._time = datetime.now()
         self._bio = [1, 1, 1]
 
@@ -438,6 +444,9 @@ class LineGraph(FigureCanvas):
         super(LineGraph, self).__init__(figure)
         self.figure = figure
         self._parent = parent
+
+        self.set_size_request(int(self._parent._activity_size.get_width()*0.75),
+                              int(self._parent._activity_size.get_height())*0.8)
 
         self._x_axis = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
         self._scale = 250
