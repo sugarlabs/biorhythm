@@ -48,11 +48,12 @@ try:
     import numpy as np
     from scipy.interpolate import spline
     import_plot_error = False
+    raise ImportError()
 except ImportError:
     import_plot_error = True
-    logging.error('Please install the libraries python-scipy, \
-    python-numpy and python-matplotlib through apt or \
-    your favourite package manager, to display the line graph')
+    logging.error("Please install the libraries python-scipy, python-numpy \
+and python-matplotlib through apt or your favourite package \
+manager, to display the line graph")
 
 
 class Activity(activity.Activity):
