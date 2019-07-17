@@ -446,7 +446,8 @@ class LineGraph(FigureCanvas):
         self.axes.set_xticks(self._x_axis, minor=True)
 
         self.disp_args = {'size': 'x-large',
-            'family': 'monospace', 'style': 'italic'}
+                          'family': 'monospace',
+                          'style': 'italic'}
 
         self.calc()
         self.calculate_graph_values()
@@ -467,9 +468,12 @@ class LineGraph(FigureCanvas):
             each_day = today + timedelta(days=diff - 8)
             self.labels.append(str(each_day))
             dif = each_day - birth
-            self.p.append(int(sin(2 * 3.14159 * dif.days / 23) * self._scale * -1))
-            self.e.append(int(sin(2 * 3.14159 * dif.days / 28) * self._scale * -1))
-            self.i.append(int(sin(2 * 3.14159 * dif.days / 33) * self._scale * -1))
+            self.p.append(int(sin(2 * 3.14159
+                          * dif.days / 23) * self._scale * -1))
+            self.e.append(int(sin(2 * 3.14159
+                          * dif.days / 28) * self._scale * -1))
+            self.i.append(int(sin(2 * 3.14159
+                          * dif.days / 33) * self._scale * -1))
 
     def calculate_graph_values(self):
         self.axes.clear()
@@ -492,21 +496,22 @@ class LineGraph(FigureCanvas):
 
         self.axes.grid(True)
         x_major = [''] + self.labels[1::2]
-        x_minor_labels = self.axes.set_xticklabels(self.labels[0::2], minor=True)
+        x_minor_labels = \
+            self.axes.set_xticklabels(self.labels[0::2], minor=True)
         x_major_labels = self.axes.set_xticklabels(x_major, minor=False)
 
         for label in x_major_labels:
             match = [None, None, None]
             try:
                 match[2] = int((label.get_text()
-                           .encode('ascii', 'ignore')
-                           .split('-')[0]))
+                                     .encode('ascii', 'ignore')
+                                     .split('-')[0]))
                 match[1] = int((label.get_text()
-                           .encode('ascii', 'ignore')
-                           .split('-')[1]))
+                                     .encode('ascii', 'ignore')
+                                     .split('-')[1]))
                 match[0] = int((label.get_text()
-                           .encode('ascii', 'ignore')
-                           .split('-')[2]))
+                                     .encode('ascii', 'ignore')
+                                     .split('-')[2]))
             except ValueError:
                 continue
             if match[0] == t[0] and match[1] == t[1] and match[2] == t[2]:
