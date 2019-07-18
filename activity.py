@@ -22,7 +22,6 @@ import gi
 gi.require_version('Gtk', '3.0')
 gi.require_version('PangoCairo', '1.0')
 from gi.repository import Gtk
-from gi.repository import Gdk
 
 from gi.repository import Pango as pango
 from gi.repository import PangoCairo as pangocairo
@@ -47,10 +46,10 @@ try:
     from matplotlib.ticker import AutoMinorLocator, ScalarFormatter
     import numpy as np
     from scipy.interpolate import spline
-    successful_import = True
+    use_line_graph = True
 
 except ImportError:
-    successful_import = False
+    use_line_graph = False
     logging.error("Please install the libraries python-scipy, python-numpy \
 and python-matplotlib through apt or your favourite package \
 manager, to display the line graph")
@@ -63,21 +62,8 @@ class Activity(activity.Activity):
 
         self.max_participants = 1
 
-        self.days = []
-        self.days.append(31)
-        self.days.append(28)
-        self.days.append(31)
-        self.days.append(30)
-        self.days.append(31)
-        self.days.append(30)
-        self.days.append(31)
-        self.days.append(31)
-        self.days.append(30)
-        self.days.append(31)
-        self.days.append(30)
-        self.days.append(31)
+        self.days = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
 
-        self._activity_size = Gdk.Screen.get_default()
         self._now = datetime.now()
 
         if "birth" in self.metadata:
@@ -86,21 +72,20 @@ class Activity(activity.Activity):
         else:
             self._birth = [1, 1, 2010]
         self._today = [self._now.day, self._now.month, self._now.year]
-        self._bio = [1, 1, 1]
 
         self.build_toolbar()
-        self._container = Gtk.Box()
-        self._container.set_homogeneous(False)
 
-        self._biorhythm = Biorhythm(self)
-        self._container.pack_start(self._biorhythm, True, True, 0)
-        if successful_import:
-            figure = Figure()
-            self._plot = LineGraph(self, figure)
-            self._container.pack_start(self._plot, True, True, 0)
-        self.set_canvas(self._container)
+        box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
+
+        self._bar_graph = BarGraph()
+        box.pack_start(self._bar_graph, False, False, 0)
+        if use_line_graph:
+            self._line_graph = LineGraph()
+            box.pack_start(self._line_graph, True, True, 0)
+        self.set_canvas(box)
 
         self.show_all()
+        self._recalculate()
 
         # 'alto', 'critico', 'bajo'
 
@@ -242,52 +227,47 @@ class Activity(activity.Activity):
         toolbox.toolbar.insert(today_button, -1)
         today_button.show()
 
-    def get_dates(self):
-        b = self._birth
-        t = self._today
-        try:
-            birth = date(b[2], b[1], b[0])
-            today = date(t[2], t[1], t[0])
-        except ValueError:
-            raise ValueError('Reached end of the month or the beginning')
-        return birth, today
-
     # BIRTH
     def day_birth_change(self, day, value):
         self._birth[0] = int(day.props.value)
         self.adjust_day_birth()
-        self.calculate_bio()
+        self._recalculate()
 
     def month_birth_change(self, month, value):
         self._birth[1] = int(month.props.value)
         self.adjust_day_birth()
-        self.calculate_bio()
+        self._recalculate()
 
     def year_birth_change(self, year, value):
         self._birth[2] = int(year.props.value)
         self.adjust_day_birth()
-        self.calculate_bio()
+        self._recalculate()
 
     # TODAY
     def day_today_change(self, day, value):
         self._today[0] = int(day.props.value)
         self.adjust_day_today()
-        self.calculate_bio()
+        self._recalculate()
 
     def month_today_change(self, month, value):
         self._today[1] = int(month.props.value)
         self.adjust_day_today()
-        self.calculate_bio()
+        self._recalculate()
 
     def year_today_change(self, year, value):
         self._today[2] = int(year.props.value)
         self.adjust_day_today()
-        self.calculate_bio()
+        self._recalculate()
 
-    def calculate_bio(self):
-        self._biorhythm.queue_draw()
-        self._plot.calc()
-        self._plot.calculate_graph_values()
+    def _recalculate(self):
+        try:
+            birth = date(self._birth[2], self._birth[1], self._birth[0])
+            today = date(self._today[2], self._today[1], self._today[0])
+        except ValueError:
+            raise ValueError('Reached end of the month or the beginning')
+
+        self._bar_graph.recalculate(birth, today)
+        self._line_graph.recalculate(birth, today, self._today)
 
     def _is_leap(self, year):
         return (year % 4 == 0 and not year % 100 == 0) or year % 400 == 0
@@ -318,25 +298,14 @@ class Activity(activity.Activity):
         self.metadata["birth"] = "/".join(map(str, self._birth))
 
 
-class Biorhythm(Gtk.DrawingArea):
+class BarGraph(Gtk.DrawingArea):
 
-    def __init__(self, parent):
-        super(Biorhythm, self).__init__()
+    def __init__(self):
+        Gtk.DrawingArea.__init__(self)
 
-        self._parent = parent
-
-        self.initialized = False
-
-        self.set_size_request(int(self._parent._activity_size.get_width()*0.25),
-                              int(self._parent._activity_size.get_height())*0.8)
-
-        self._time = datetime.now()
         self._bio = [1, 1, 1]
-
-        self._active = False
-
         self._scale = 250
-        self._line_width = 2
+        self.set_size_request(self._scale + 50, -1)  # set minimum width only
 
         self._COLOR_P = "#005FE4"
         self._COLOR_E = "#00B20D"
@@ -344,38 +313,18 @@ class Biorhythm(Gtk.DrawingArea):
         self._COLOR_WHITE = "#FFFFFF"
         self._COLOR_BLACK = "#000000"
 
-        # Gtk.Widget signals
         self.connect("draw", self._draw_cb)
         self.connect("size-allocate", self._size_allocate_cb)
 
-    def calc(self):
-        try:
-            birth, today = self._parent.get_dates()
-        except ValueError as e:
-            logging.error(e)
-            return
+    def _size_allocate_cb(self, widget, allocation):
+        self._center_x = int(allocation.width / 2.0)
+        self._center_y = int(allocation.height / 2.0)
 
-        dif = today - birth
+    def _draw_cb(self, widget, cr):
+        self._draw_bars(cr)
+        self._draw_labels(cr)
 
-        # Physical cycle
-        p = sin(2 * 3.14159 * dif.days / 23)
-
-        # Emotional cycle
-        e = sin(2 * 3.14159 * dif.days / 28)
-
-        # Intellectual cycle
-        i = sin(2 * 3.14159 * dif.days / 33)
-
-        self._bio = (p, e, i)
-
-        return self._bio
-
-    def _draw_biorhythm(self, cr):
-        self._draw_time_scale(cr)
-        self._draw_time(cr)
-
-    def _draw_time_scale(self, cr):
-
+    def _draw_bars(self, cr):
         p_length = int(self._bio[0] * self._scale)
         e_length = int(self._bio[1] * self._scale)
         i_length = int(self._bio[2] * self._scale)
@@ -407,13 +356,11 @@ class Biorhythm(Gtk.DrawingArea):
         cr.rectangle(x - 35 + (width + 20), y, width, i_length)
         cr.fill()
 
-    def _draw_time(self, cr):
-
+    def _draw_labels(self, cr):
         markup = _('<markup>\
 <span lang="en" font_desc="Sans,Monospace Bold 12">\
-<span foreground="#E6000A">%s</span></span></markup>')
+<span foreground="#000000">%s</span></span></markup>')
 
-        cr.set_source_rgba(*style.Color(self._COLOR_E).get_rgba())
         pango_layout = pangocairo.create_layout(cr)
         d = int(self._center_y + self._scale + 20)
         markup_f = markup % "Physical Emotional Intellectual"
@@ -423,52 +370,41 @@ class Biorhythm(Gtk.DrawingArea):
         cr.translate(self._center_x - dx / 2.0, d - dy / 2.0 + 5)
         pangocairo.show_layout(cr, pango_layout)
 
-    def _draw_cb(self, widget, cr):
-        self.calc()
-        self._draw_biorhythm(cr)
-        return True
+    def recalculate(self, birth, today):
+        dif = today - birth
 
-    def _size_allocate_cb(self, widget, allocation):
-        self._center_x = int(allocation.width / 2.0)
-        self._center_y = int(allocation.height / 2.0)
+        # Physical cycle
+        p = sin(2 * 3.14159 * dif.days / 23)
 
-    def _redraw_canvas(self):
-        pass
+        # Emotional cycle
+        e = sin(2 * 3.14159 * dif.days / 28)
 
-    def _update_cb(self):
-        pass
+        # Intellectual cycle
+        i = sin(2 * 3.14159 * dif.days / 33)
+
+        self._bio = (p, e, i)
+        self.queue_draw()
 
 
-class LineGraph(FigureCanvas):
+class LineGraph(FigureCanvas):  # a Gtk.DrawingArea
 
-    def __init__(self, parent, figure):
-        super(LineGraph, self).__init__(figure)
-        self.figure = figure
-        self._parent = parent
+    def __init__(self):
+        figure = Figure()
+        figure.set_constrained_layout(True)
 
-        self.set_size_request(int(self._parent._activity_size.get_width()*0.75),
-                              int(self._parent._activity_size.get_height())*0.8)
+        FigureCanvas.__init__(self, figure)
 
         self._x_axis = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
-        self._scale = 250
+        self._scale = 250  # FIXME: why?
 
-        self.axes = self.figure.add_subplot(111)
+        self.axes = figure.add_subplot(111)
         self.axes.set_xticks(self._x_axis, minor=True)
 
         self.disp_args = {'size': 'x-large',
                           'family': 'monospace',
                           'style': 'italic'}
 
-        self.calc()
-        self.calculate_graph_values()
-
-    def calc(self):
-        try:
-            birth, today = self._parent.get_dates()
-        except ValueError as e:
-            logging.error(e)
-            return
-
+    def recalculate(self, birth, today, t):
         self.p = []
         self.e = []
         self.i = []
@@ -478,16 +414,14 @@ class LineGraph(FigureCanvas):
             each_day = today + timedelta(days=diff - 8)
             self.labels.append(str(each_day))
             dif = each_day - birth
-            self.p.append(int(sin(2 * 3.14159
-                          * dif.days / 23) * self._scale * -1))
-            self.e.append(int(sin(2 * 3.14159
-                          * dif.days / 28) * self._scale * -1))
-            self.i.append(int(sin(2 * 3.14159
-                          * dif.days / 33) * self._scale * -1))
+            self.p.append(int(sin(2 * 3.14159 *
+                                  dif.days / 23) * self._scale * -1))
+            self.e.append(int(sin(2 * 3.14159 *
+                                  dif.days / 28) * self._scale * -1))
+            self.i.append(int(sin(2 * 3.14159 *
+                                  dif.days / 33) * self._scale * -1))
 
-    def calculate_graph_values(self):
         self.axes.clear()
-        t = self._parent._today
         x_smooth = np.linspace(self._x_axis[0], self._x_axis[-1], 200)
         smooth_p = spline(self._x_axis, self.p, x_smooth)
         smooth_e = spline(self._x_axis, self.e, x_smooth)
