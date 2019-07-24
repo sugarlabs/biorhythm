@@ -390,7 +390,8 @@ class LineGraph(FigureCanvas):  # a Gtk.DrawingArea
 
     def __init__(self):
         figure = Figure()
-        figure.set_constrained_layout(True)
+        if hasattr(figure, 'set_constrained_layout'):
+            figure.set_constrained_layout(True)
 
         FigureCanvas.__init__(self, figure)
 
