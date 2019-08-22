@@ -78,10 +78,12 @@ class Activity(activity.Activity):
         box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
 
         self._bar_graph = BarGraph()
-        box.pack_start(self._bar_graph, False, False, 0)
         if use_line_graph:
+            box.pack_start(self._bar_graph, False, False, 0)
             self._line_graph = LineGraph()
             box.pack_start(self._line_graph, True, True, 0)
+        else:
+            box.pack_start(self._bar_graph, True, True, 0)
         self.set_canvas(box)
 
         self.show_all()
@@ -267,7 +269,8 @@ class Activity(activity.Activity):
             raise ValueError('Reached end of the month or the beginning')
 
         self._bar_graph.recalculate(birth, today)
-        self._line_graph.recalculate(birth, today, self._today)
+        if use_line_graph:
+            self._line_graph.recalculate(birth, today, self._today)
 
     def _is_leap(self, year):
         return (year % 4 == 0 and not year % 100 == 0) or year % 400 == 0
