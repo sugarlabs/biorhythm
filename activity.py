@@ -50,8 +50,8 @@ try:
 
 except ImportError:
     use_line_graph = False
-    logging.error("Please install the libraries python-scipy, python-numpy \
-and python-matplotlib through apt or your favourite package \
+    logging.error("Please install the libraries python3-scipy, python3-numpy \
+and python3-matplotlib through apt or your favourite package \
 manager, to display the line graph")
 
 
@@ -68,7 +68,7 @@ class Activity(activity.Activity):
 
         if "birth" in self.metadata:
             birth = self.metadata["birth"].split("/")
-            self._birth = map(int, birth)
+            self._birth = list(map(int, birth))
         else:
             self._birth = [1, 1, 2010]
         self._today = [self._now.day, self._now.month, self._now.year]
@@ -453,13 +453,13 @@ class LineGraph(FigureCanvas):  # a Gtk.DrawingArea
             try:
                 match[2] = int((label.get_text()
                                      .encode('ascii', 'ignore')
-                                     .split('-')[0]))
+                                     .split(b'-')[0]))
                 match[1] = int((label.get_text()
                                      .encode('ascii', 'ignore')
-                                     .split('-')[1]))
+                                     .split(b'-')[1]))
                 match[0] = int((label.get_text()
                                      .encode('ascii', 'ignore')
-                                     .split('-')[2]))
+                                     .split(b'-')[2]))
             except ValueError:
                 continue
             if match[0] == t[0] and match[1] == t[1] and match[2] == t[2]:
