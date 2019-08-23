@@ -34,10 +34,25 @@ from sugar3.graphics.toolbarbox import ToolbarButton
 from sugar3.graphics import style
 
 from math import sin
-from datetime import date
-from datetime import datetime
+from datetime import date, datetime, timedelta
 
 from gettext import gettext as _
+import logging
+
+try:
+    from matplotlib.figure import Figure
+    from matplotlib.backends.backend_gtk3agg \
+        import FigureCanvasGTK3Agg as FigureCanvas
+    from matplotlib.ticker import AutoMinorLocator, ScalarFormatter
+    import numpy as np
+    from scipy.interpolate import spline
+    use_line_graph = True
+
+except ImportError:
+    use_line_graph = False
+    logging.error("Please install the libraries python-scipy, python-numpy \
+and python-matplotlib through apt or your favourite package \
+manager, to display the line graph")
 
 
 class Activity(activity.Activity):
@@ -47,19 +62,7 @@ class Activity(activity.Activity):
 
         self.max_participants = 1
 
-        self.days = []
-        self.days.append(31)
-        self.days.append(28)
-        self.days.append(31)
-        self.days.append(30)
-        self.days.append(31)
-        self.days.append(30)
-        self.days.append(31)
-        self.days.append(31)
-        self.days.append(30)
-        self.days.append(31)
-        self.days.append(30)
-        self.days.append(31)
+        self.days = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
 
         self._now = datetime.now()
 
@@ -69,14 +72,22 @@ class Activity(activity.Activity):
         else:
             self._birth = [1, 1, 2010]
         self._today = [self._now.day, self._now.month, self._now.year]
-        self._bio = [1, 1, 1]
 
         self.build_toolbar()
 
-        self._biorhythm = Biorhythm(self)
-        self.set_canvas(self._biorhythm)
+        box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
+
+        self._bar_graph = BarGraph()
+        if use_line_graph:
+            box.pack_start(self._bar_graph, False, False, 0)
+            self._line_graph = LineGraph()
+            box.pack_start(self._line_graph, True, True, 0)
+        else:
+            box.pack_start(self._bar_graph, True, True, 0)
+        self.set_canvas(box)
 
         self.show_all()
+        self._recalculate()
 
         # 'alto', 'critico', 'bajo'
 
@@ -222,37 +233,44 @@ class Activity(activity.Activity):
     def day_birth_change(self, day, value):
         self._birth[0] = int(day.props.value)
         self.adjust_day_birth()
-        self.calculate_bio()
+        self._recalculate()
 
     def month_birth_change(self, month, value):
         self._birth[1] = int(month.props.value)
         self.adjust_day_birth()
-        self.calculate_bio()
+        self._recalculate()
 
     def year_birth_change(self, year, value):
         self._birth[2] = int(year.props.value)
         self.adjust_day_birth()
-        self.calculate_bio()
+        self._recalculate()
 
     # TODAY
     def day_today_change(self, day, value):
         self._today[0] = int(day.props.value)
         self.adjust_day_today()
-        self.calculate_bio()
+        self._recalculate()
 
     def month_today_change(self, month, value):
         self._today[1] = int(month.props.value)
         self.adjust_day_today()
-        self.calculate_bio()
+        self._recalculate()
 
     def year_today_change(self, year, value):
         self._today[2] = int(year.props.value)
         self.adjust_day_today()
-        self.calculate_bio()
+        self._recalculate()
 
-    def calculate_bio(self):
-        self._bio = self._biorhythm.calc()
-        self.queue_draw()
+    def _recalculate(self):
+        try:
+            birth = date(self._birth[2], self._birth[1], self._birth[0])
+            today = date(self._today[2], self._today[1], self._today[0])
+        except ValueError:
+            raise ValueError('Reached end of the month or the beginning')
+
+        self._bar_graph.recalculate(birth, today)
+        if use_line_graph:
+            self._line_graph.recalculate(birth, today, self._today)
 
     def _is_leap(self, year):
         return (year % 4 == 0 and not year % 100 == 0) or year % 400 == 0
@@ -283,22 +301,14 @@ class Activity(activity.Activity):
         self.metadata["birth"] = "/".join(map(str, self._birth))
 
 
-class Biorhythm(Gtk.DrawingArea):
+class BarGraph(Gtk.DrawingArea):
 
-    def __init__(self, parent):
-        super(Biorhythm, self).__init__()
+    def __init__(self):
+        Gtk.DrawingArea.__init__(self)
 
-        self._parent = parent
-
-        self.initialized = False
-
-        self._time = datetime.now()
         self._bio = [1, 1, 1]
-
-        self._active = False
-
         self._scale = 250
-        self._line_width = 2
+        self.set_size_request(self._scale + 50, -1)  # set minimum width only
 
         self._COLOR_P = "#005FE4"
         self._COLOR_E = "#00B20D"
@@ -306,39 +316,18 @@ class Biorhythm(Gtk.DrawingArea):
         self._COLOR_WHITE = "#FFFFFF"
         self._COLOR_BLACK = "#000000"
 
-        # Gtk.Widget signals
         self.connect("draw", self._draw_cb)
         self.connect("size-allocate", self._size_allocate_cb)
 
-    def calc(self):
+    def _size_allocate_cb(self, widget, allocation):
+        self._center_x = int(allocation.width / 2.0)
+        self._center_y = int(allocation.height / 2.0)
 
-        b = self._parent._birth
-        t = self._parent._today
+    def _draw_cb(self, widget, cr):
+        self._draw_bars(cr)
+        self._draw_labels(cr)
 
-        birth = date(b[2], b[1], b[0])
-        today = date(t[2], t[1], t[0])
-
-        dif = today - birth
-
-        # Physical cycle
-        p = sin(2 * 3.14159 * dif.days / 23)
-
-        # Emotional cycle
-        e = sin(2 * 3.14159 * dif.days / 28)
-
-        # Intellectual cycle
-        i = sin(2 * 3.14159 * dif.days / 33)
-
-        self._bio = (p, e, i)
-
-        return self._bio
-
-    def _draw_biorhythm(self, cr):
-        self._draw_time_scale(cr)
-        self._draw_time(cr)
-
-    def _draw_time_scale(self, cr):
-
+    def _draw_bars(self, cr):
         p_length = int(self._bio[0] * self._scale)
         e_length = int(self._bio[1] * self._scale)
         i_length = int(self._bio[2] * self._scale)
@@ -370,13 +359,11 @@ class Biorhythm(Gtk.DrawingArea):
         cr.rectangle(x - 35 + (width + 20), y, width, i_length)
         cr.fill()
 
-    def _draw_time(self, cr):
-
+    def _draw_labels(self, cr):
         markup = _('<markup>\
 <span lang="en" font_desc="Sans,Monospace Bold 12">\
-<span foreground="#E6000A">%s</span></span></markup>')
+<span foreground="#000000">%s</span></span></markup>')
 
-        cr.set_source_rgba(*style.Color(self._COLOR_E).get_rgba())
         pango_layout = pangocairo.create_layout(cr)
         d = int(self._center_y + self._scale + 20)
         markup_f = markup % "Physical Emotional Intellectual"
@@ -386,17 +373,103 @@ class Biorhythm(Gtk.DrawingArea):
         cr.translate(self._center_x - dx / 2.0, d - dy / 2.0 + 5)
         pangocairo.show_layout(cr, pango_layout)
 
-    def _draw_cb(self, widget, cr):
-        self.calc()
-        self._draw_biorhythm(cr)
-        return True
+    def recalculate(self, birth, today):
+        dif = today - birth
 
-    def _size_allocate_cb(self, widget, allocation):
-        self._center_x = int(allocation.width / 2.0)
-        self._center_y = int(allocation.height / 2.0)
+        # Physical cycle
+        p = sin(2 * 3.14159 * dif.days / 23)
 
-    def _redraw_canvas(self):
-        pass
+        # Emotional cycle
+        e = sin(2 * 3.14159 * dif.days / 28)
 
-    def _update_cb(self):
-        pass
+        # Intellectual cycle
+        i = sin(2 * 3.14159 * dif.days / 33)
+
+        self._bio = (p, e, i)
+        self.queue_draw()
+
+
+class LineGraph(FigureCanvas):  # a Gtk.DrawingArea
+
+    def __init__(self):
+        figure = Figure()
+        if hasattr(figure, 'set_constrained_layout'):
+            figure.set_constrained_layout(True)
+
+        FigureCanvas.__init__(self, figure)
+
+        self._x_axis = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
+        self._scale = 250  # FIXME: why?
+
+        self.axes = figure.add_subplot(111)
+        self.axes.set_xticks(self._x_axis, minor=True)
+
+        self.disp_args = {'size': 'x-large',
+                          'family': 'monospace',
+                          'style': 'italic'}
+
+    def recalculate(self, birth, today, t):
+        self.p = []
+        self.e = []
+        self.i = []
+        self.labels = []
+
+        for diff in self._x_axis:
+            each_day = today + timedelta(days=diff - 8)
+            self.labels.append(str(each_day))
+            dif = each_day - birth
+            self.p.append(int(sin(2 * 3.14159 *
+                                  dif.days / 23) * self._scale * -1))
+            self.e.append(int(sin(2 * 3.14159 *
+                                  dif.days / 28) * self._scale * -1))
+            self.i.append(int(sin(2 * 3.14159 *
+                                  dif.days / 33) * self._scale * -1))
+
+        self.axes.clear()
+        x_smooth = np.linspace(self._x_axis[0], self._x_axis[-1], 200)
+        smooth_p = spline(self._x_axis, self.p, x_smooth)
+        smooth_e = spline(self._x_axis, self.e, x_smooth)
+        smooth_i = spline(self._x_axis, self.i, x_smooth)
+
+        self.axes.plot(x_smooth, smooth_p, 'b', label='Physical')
+        self.axes.plot(x_smooth, smooth_e, 'g', label='Emotional')
+        self.axes.plot(x_smooth, smooth_i, 'r', label='Intellectual')
+
+        al = AutoMinorLocator(n=2)
+        sf = ScalarFormatter()
+        self.axes.set_xlabel("Day", self.disp_args)
+        self.axes.set_ylabel("Score", self.disp_args)
+        self.axes.xaxis.set_minor_locator(al)
+        self.axes.xaxis.set_minor_formatter(sf)
+
+        self.axes.grid(True)
+        x_major = [''] + self.labels[1::2]
+        x_minor_labels = \
+            self.axes.set_xticklabels(self.labels[0::2], minor=True)
+        x_major_labels = self.axes.set_xticklabels(x_major, minor=False)
+
+        for label in x_major_labels:
+            match = [None, None, None]
+            try:
+                match[2] = int((label.get_text()
+                                     .encode('ascii', 'ignore')
+                                     .split('-')[0]))
+                match[1] = int((label.get_text()
+                                     .encode('ascii', 'ignore')
+                                     .split('-')[1]))
+                match[0] = int((label.get_text()
+                                     .encode('ascii', 'ignore')
+                                     .split('-')[2]))
+            except ValueError:
+                continue
+            if match[0] == t[0] and match[1] == t[1] and match[2] == t[2]:
+                label.set_color('purple')
+                label.set_fontweight('bold')
+            label.set_fontsize('small')
+            label.set_rotation(45)
+        for label in x_minor_labels:
+            label.set_fontsize('small')
+            label.set_visible(True)
+            label.set_rotation(45)
+        self.axes.legend()
+        self.queue_draw()
