@@ -8,55 +8,58 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2017-10-17 12:13+1100\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: Automatically generated\n"
-"Language-Team: none\n"
+"PO-Revision-Date: 2025-04-14 13:22+0000\n"
+"Last-Translator: NF <rkavt@smartprojects.ge>\n"
+"Language-Team: Georgian <http://weblate.sugarlabs.org/projects/"
+"sugar-activities/biorhythm/ka/>\n"
 "Language: ka\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: Weblate 5.4.2\n"
 
 #. TRANS: "name" option from activity.info file
 #: activity/activity.info:2
 msgid "Biorhythm"
-msgstr ""
+msgstr "ბიორიტმი"
 
 #. TRANS: "summary" option from activity.info file
 #. TRANS: "description" option from activity.info file
 msgid "An activity that calculates your biorhythms"
-msgstr ""
+msgstr "აქტივობა, რომელიც თქვენს ბიორითმებს გამოთვლის"
 
 #: activity.py:74
 msgid "<Ctrl>Q"
-msgstr ""
+msgstr "<Ctrl>Q"
 
 #: activity.py:89
 msgid "Birth:"
-msgstr ""
+msgstr "დაბადება:"
 
 #: activity.py:89 activity.py:145
 msgid "Day"
-msgstr ""
+msgstr "დღე"
 
 #: activity.py:104 activity.py:160
 msgid "Month"
-msgstr ""
+msgstr "თვე"
 
 #: activity.py:119 activity.py:175
 msgid "Year"
-msgstr ""
+msgstr "წელი"
 
 #: activity.py:133
 msgid "Birth"
-msgstr ""
+msgstr "დაბადება"
 
 #: activity.py:145
 msgid "Today:"
-msgstr ""
+msgstr "დღეს:"
 
 #: activity.py:189
 msgid "Today"
-msgstr ""
+msgstr "დღეს"
 
 #: activity.py:356
 #, python-format
@@ -64,3 +67,5 @@ msgid ""
 "<markup><span lang=\"en\" font_desc=\"Sans,Monospace Bold 12\"><span "
 "foreground=\"#E6000A\">%s</span></span></markup>"
 msgstr ""
+"<markup><span lang=\"en\" font_desc=\"Sans,Monospace Bold 12\"><span "
+"foreground=\"#E6000A\">%s</span></span></markup>"
